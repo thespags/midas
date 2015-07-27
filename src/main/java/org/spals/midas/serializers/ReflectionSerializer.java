@@ -1,8 +1,8 @@
 package org.spals.midas.serializers;
 
+import com.google.common.base.Preconditions;
+
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 public final class ReflectionSerializer<T> implements Serializer<T> {
 
@@ -45,11 +45,11 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
                     builder.append("\n");
                 }
             } catch (IllegalAccessException e) {
-                /* This shouldn't happen because we have set accessible = true */
+                // This shouldn't happen because we set accessible to true.
                 throw new IllegalStateException("Couldn't access field " + field.getName());
             }
         }
-        return builder.toString().getBytes(StandardCharsets.UTF_8);
+        return Converter.toUtf8(builder.toString());
     }
 
     private Serializer getSerializer(Class clazz) {
@@ -70,8 +70,12 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
             serializers = SerializerMap.make();
         }
 
+        /**
+         * Fields will be written even if null.
+         */
         public Builder writeNull() {
-            writeNull = false;
+            Preconditions.checkArgument(!writeNull, "already set write null to true");
+            writeNull = true;
             return this;
         }
 
@@ -80,21 +84,19 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
             return this;
         }
 
+        /**
+         * Registers a serializer that is used if no type specific is one defined.
+         */
         public Builder registerDefault(Serializer<Object> serializer) {
             defaultSerializer = serializer;
             return this;
         }
 
-        public Builder registerPrimitives() {
-            // TODO fill this in wiht more primitives
-            serializers.put(int.class, Serializers.INTEGER);
-            serializers.put(Integer.class, Serializers.INTEGER);
-            serializers.put(byte.class, Serializers.BYTE);
-            serializers.put(Byte.class, Serializers.BYTE);
-            serializers.put(byte[].class, Serializers.BYTE_ARRAY);
-            serializers.put(String.class, Serializers.STRING);
-            serializers.put(String[].class, Serializers.STRING_ARRAY);
-            serializers.put(Map.class, new MapSerializer(serializers));
+        /**
+         * Registers java serializers if they have not already been registered.
+         */
+        public Builder registerJava() {
+            serializers.putJava();
             return this;
         }
 

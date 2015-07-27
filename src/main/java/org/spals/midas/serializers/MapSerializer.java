@@ -21,11 +21,11 @@ class MapSerializer implements Serializer<Map> {
             StreamSupport.stream(((Map<?, ?>) map).entrySet().spliterator(), false)
                 .map(
                     entry ->
-                        fromUtf8(((Serializer) serializers.getUnsafe(entry.getKey().getClass())).serialize(entry.getKey()))
-                        + "->" +
-                        fromUtf8(((Serializer) serializers.getUnsafe(entry.getValue().getClass())).serialize(entry.getValue()))
+                        fromUtf8((serializers.getUnsafe(entry.getKey().getClass())).serialize(entry.getKey()))
+                            + "->"
+                            + fromUtf8((serializers.getUnsafe(entry.getValue().getClass())).serialize(entry.getValue()))
                 )
                 .collect(Collectors.joining(", ", "(", ")"))
-            );
+        );
     }
 }

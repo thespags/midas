@@ -2,6 +2,9 @@ package org.spals.midas.serializers;
 
 import java.lang.reflect.Array;
 
+/**
+ * Converts a primitive array to [1, 2, 3, ...]
+ */
 class PrimitiveArraySerializer implements Serializer<Object> {
 
     @Override

@@ -1,7 +1,6 @@
 package org.spals.midas.serializers;
 
 import com.google.common.collect.ImmutableMap;
-import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 
 
@@ -16,8 +15,7 @@ public class ReflectionSerializerTest {
     public void foo() {
         String bytes = Converter.fromUtf8(
             ReflectionSerializer.builder()
-                .register(int[].class, Serializers.INTEGER_ARRAY)
-                .registerPrimitives()
+                .registerJava()
                 .build()
                 .serialize(new Foo())
         );
