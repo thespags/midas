@@ -8,13 +8,21 @@
     <packaging>jar</packaging>
 
     <properties>
+        <guava.version>18.0</guava.version>
+        <testng.version>6.9.6</testng.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
