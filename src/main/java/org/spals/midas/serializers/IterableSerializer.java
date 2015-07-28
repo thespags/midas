@@ -1,5 +1,7 @@
 package org.spals.midas.serializers;
 
+import com.google.common.base.Preconditions;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collector;
@@ -9,16 +11,18 @@ import java.util.stream.StreamSupport;
 import static org.spals.midas.serializers.Converter.fromUtf8;
 import static org.spals.midas.serializers.Converter.toUtf8;
 
-class IterableSerializer<T> implements Serializer<Iterable<T>> {
+class IterableSerializer implements Serializer<Iterable> {
 
-    private final Serializer<T> element;
+    private final SerializerMap serializers;
 
-    public IterableSerializer(final Serializer<T> element) {
-        this.element = element;
+    public IterableSerializer(final SerializerMap serializers) {
+        Preconditions.checkNotNull(serializers);
+        this.serializers = serializers;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public byte[] serialize(Iterable<T> iterable) {
+    public byte[] serialize(Iterable iterable) {
         Collector<CharSequence, ?, String> joiner;
         if (iterable instanceof Set) {
             joiner = Collectors.joining(", ", "{", "}");
@@ -27,9 +31,10 @@ class IterableSerializer<T> implements Serializer<Iterable<T>> {
         } else {
             joiner = Collectors.joining(", ", "(", ")");
         }
+
         return toUtf8(
-            StreamSupport.stream(iterable.spliterator(), false)
-                .map(v -> fromUtf8(element.serialize(v)))
+            StreamSupport.stream(((Iterable<?>) iterable).spliterator(), false)
+                .map(v -> fromUtf8(serializers.getUnsafe(v.getClass()).serialize(v)))
                 .collect(joiner)
         );
     }

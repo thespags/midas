@@ -6,15 +6,14 @@ import org.testng.annotations.Test;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.spals.midas.serializers.ByteArrayMatcher.isBytes;
 
 public class MapSerializerTest {
 
     @Test
     public void testSerialize() {
-        Map<String, Integer> map = ImmutableMap.of("foo", 1);
-        // TODO add a byte[] matcher
-        String actual = Converter.fromUtf8(new MapSerializer(SerializerMap.make().putJava()).serialize(map));
-        assertThat(actual, is("(foo->1)"));
+        final Map<String, Integer> map = ImmutableMap.of("foo", 1);
+        final byte[] actual = new MapSerializer(SerializerMap.make().putJava()).serialize(map);
+        assertThat(actual, isBytes("(foo->1)"));
     }
 }

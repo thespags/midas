@@ -1,17 +1,20 @@
 package org.spals.midas.serializers;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Arrays;
 
 class ArraySerializer<T> implements Serializer<T[]> {
 
-    private final Serializer<T> element;
+    private final IterableSerializer serializer;
 
-    public ArraySerializer(final Serializer<T> element) {
-        this.element = element;
+    public ArraySerializer(final SerializerMap serializers) {
+        Preconditions.checkNotNull(serializers);
+        this.serializer = new IterableSerializer(serializers);
     }
 
     @Override
     public byte[] serialize(T[] array) {
-        return Serializers.ofIterable(element).serialize(Arrays.asList(array));
+        return serializer.serialize(Arrays.asList(array));
     }
 }
