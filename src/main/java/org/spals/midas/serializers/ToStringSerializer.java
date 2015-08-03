@@ -1,8 +1,11 @@
 package org.spals.midas.serializers;
 
+/**
+ * Calls {@link #toString()} for a given type T.
+ */
 class ToStringSerializer<T> implements Serializer<T> {
     @Override
-    public byte[] serialize(T input) {
-        return Converter.toUtf8(input.toString());
+    public String serialize(final T input) {
+        return input.toString();
     }
 }
