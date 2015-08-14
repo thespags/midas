@@ -1,7 +1,7 @@
 package org.spals.midas;
 
-import org.spals.midas.reader.GoldFileReader;
-import org.spals.midas.reader.GoldFileReaders;
+import org.spals.midas.reader.GoldFileIO;
+import org.spals.midas.reader.GoldFileIOs;
 import org.spals.midas.serializers.ReflectionSerializer;
 import org.spals.midas.serializers.Serializer;
 
@@ -17,7 +17,7 @@ public class GoldFileTest<T> {
     private byte[] goldFileBytes;
     private URL goldFileLocation;
     private Serializer<T> serializer;
-    private GoldFileReader reader;
+    private GoldFileIO reader;
 
     private GoldFileTest() {
     }
@@ -26,18 +26,19 @@ public class GoldFileTest<T> {
         return new GoldFileTest<>();
     }
 
-    public GoldFileTest<T> withClassPathReader(final String location) {
-        return withReader(GoldFileReaders.classPathReader(location));
+    public GoldFileTest<T> withClassPathReader(final Class<?> clazz, final String location) {
+        return withReader(GoldFileIOs.classPath(clazz, location));
     }
 
     public GoldFileTest<T> withFileSystemReader(final String location) {
-        return withReader(GoldFileReaders.fileSystemReader(location));
+        return withReader(GoldFileIOs.fileSystem(location));
     }
 
-    public GoldFileTest<T> withReader(final GoldFileReader reader) {
+    public GoldFileTest<T> withReader(final GoldFileIO reader) {
         this.reader = reader;
         return this;
     }
+
 
     public GoldFileTest<T> withDefaultSerializer() {
         return withSerializer(ReflectionSerializer.builder().registerJava().build());
@@ -49,18 +50,21 @@ public class GoldFileTest<T> {
     }
 
     public void dryRun(final T object) {
-        byte[] newBytes = serializer.serialize(object).getBytes(StandardCharsets.UTF_8);
+        final byte[] newBytes = serializer.serialize(object).getBytes(StandardCharsets.UTF_8);
 
         if (reader.exists()) {
             //diff
             reader.create();
         } else {
-            Arrays.equals(reader.read(), newBytes);
+            if (Arrays.equals(reader.read(), newBytes)) {
+                // awesome test passes!
+            } else {
+
+                // todo provide a differ or default differ?
+            }
         }
 
-
         reader.write(newBytes);
-
     }
 
 //    public void run(final T object) {

@@ -5,9 +5,13 @@ import java.io.IOException;
 /**
  * @author tkral
  */
-public interface GoldFileReader {
+public interface GoldFileIO {
 
-    byte[] read() throws IOException;
+    byte[] read();
 
     boolean exists();
+
+    void create();
+
+    void write(byte[] newBytes);
 }
