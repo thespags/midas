@@ -3,11 +3,14 @@ package org.spals.midas;
 import org.spals.midas.reader.ClasspathGoldFileReader;
 import org.spals.midas.reader.FilesystemGoldFileReader;
 import org.spals.midas.reader.GoldFileReader;
+import org.spals.midas.reader.GoldFileReaders;
 import org.spals.midas.serializers.ReflectionSerializer;
 import org.spals.midas.serializers.Serializer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -19,25 +22,25 @@ public class GoldFileTest<T> {
     private byte[] goldFileBytes;
     private URL goldFileLocation;
     private Serializer<T> serializer;
+    private GoldFileReader reader;
 
-    private GoldFileTest() {  }
+    private GoldFileTest() {
+    }
 
-    public static <T> GoldFileTest create(Class<T> goldFileType) {
+    public static <T> GoldFileTest create(final Class<T> goldFileType) {
         return new GoldFileTest<>();
     }
 
-    public GoldFileTest<T> withGoldFileFromClasspath(final String goldFileLocation) throws IOException {
-        this.goldFileBytes = new ClasspathGoldFileReader().readGoldFile(goldFileLocation);
-        return this;
+    public GoldFileTest<T> withClassPathReader() {
+        return withReader(GoldFileReaders.CLASS_PATH);
     }
 
-    public GoldFileTest<T> withGoldFileFromFileSystem(final String goldFileLocation) throws IOException {
-        this.goldFileBytes = new FilesystemGoldFileReader().readGoldFile(goldFileLocation);
-        return this;
+    public GoldFileTest<T> withFileSystemReader() {
+        return withReader(GoldFileReaders.FILE_SYSTEM);
     }
 
-    public GoldFileTest<T> withGoldFile(final String goldFileLocation, final GoldFileReader goldFileReader) throws IOException {
-        this.goldFileBytes = checkNotNull(goldFileReader).readGoldFile(checkNotNull(goldFileLocation));
+    public GoldFileTest<T> withReader(final GoldFileReader reader) {
+        this.reader = reader;
         return this;
     }
 
@@ -46,12 +49,24 @@ public class GoldFileTest<T> {
         return this;
     }
 
-    public GoldFileTest<T> withCustomSerializer(final Serializer<T> serializer) {
+    public GoldFileTest<T> withSerializer(final Serializer<T> serializer) {
         this.serializer = serializer;
         return this;
     }
 
     public void dryRun(final T object) {
+        byte[] newBytes = serializer.serialize(object).getBytes(StandardCharsets.UTF_8);
+
+        if (reader.exists(goldFileLocation)) {
+            //diff
+            reader.create();
+        } else {
+            Arrays.equals(reader.read(), newBytes);
+        }
+
+
+        reader.write(newBytes);
+
     }
 
 //    public void run(final T object) {

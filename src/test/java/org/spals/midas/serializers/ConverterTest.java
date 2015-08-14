@@ -17,7 +17,7 @@ public class ConverterTest {
 
     @Test
     public void testFrom() {
-        final byte[] bytes = new byte[] {1, 2, 3};
+        final byte[] bytes = new byte[]{1, 2, 3};
         assertThat(Converter.fromUtf8(bytes), equalTo(new String(bytes, StandardCharsets.UTF_8)));
     }
 }

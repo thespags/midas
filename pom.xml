@@ -13,6 +13,7 @@
         <guava.version>18.0</guava.version>
         <testng.version>6.9.6</testng.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
+        <catch-exception.version>1.4.4</catch-exception.version>
     </properties>
 
     <dependencies>
@@ -32,6 +33,12 @@
             <artifactId>java-hamcrest</artifactId>
             <version>${hamcrest.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.codearte.catch-exception</groupId>
+            <artifactId>catch-exception</artifactId>
+            <version>${catch-exception.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

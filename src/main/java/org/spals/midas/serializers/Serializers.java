@@ -1,11 +1,11 @@
 package org.spals.midas.serializers;
 
 /**
- * TODO clean this up.
+ * Provides a factory for standard serializes.
  */
-public class Serializers {
+public final class Serializers {
 
-    private static final Serializer<Object> OBJECT = new ToStringSerializer<>();
+    public static final Serializer<Object> OBJECT = new ToStringSerializer<>();
 
     private Serializers() {
     }

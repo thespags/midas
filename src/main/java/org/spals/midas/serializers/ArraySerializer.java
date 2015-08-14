@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 
+/**
+ * Defers logic to {@link IterableSerializer}, as a list.
+ */
 class ArraySerializer<T> implements Serializer<T[]> {
 
     private final IterableSerializer serializer;
@@ -14,7 +17,7 @@ class ArraySerializer<T> implements Serializer<T[]> {
     }
 
     @Override
-    public byte[] serialize(T[] array) {
+    public String serialize(final T[] array) {
         return serializer.serialize(Arrays.asList(array));
     }
 }

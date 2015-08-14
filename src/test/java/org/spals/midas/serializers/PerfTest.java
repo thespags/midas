@@ -1,18 +1,16 @@
 package org.spals.midas.serializers;
 
-import org.testng.annotations.Test;
-
 public class PerfTest {
 
     public void testFoo() {
-        Integer[] i = new Integer[10000000];
+        final Integer[] i = new Integer[10000000];
         for (int j = 0; j < i.length; j++) {
             i[j] = j;
         }
         long total = 0;
         long ptotal = 0;
         for (int k = 0; k < 10; k++) {
-            SerializerMap map = SerializerMap.make().putJava();
+            final SerializerMap map = SerializerMap.make().putJava();
 
             long start;
             start = System.currentTimeMillis();

@@ -4,9 +4,6 @@ import com.google.common.base.Preconditions;
 
 import java.lang.reflect.Array;
 
-/**
- * Converts a primitive array to [1, 2, 3, ...]
- */
 class PrimitiveArraySerializer implements Serializer<Object> {
 
     private final SerializerMap serializers;
@@ -18,17 +15,17 @@ class PrimitiveArraySerializer implements Serializer<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public byte[] serialize(Object value) {
-        StringBuilder builder = new StringBuilder();
+    public String serialize(final Object value) {
+        final StringBuilder builder = new StringBuilder();
         builder.append("[");
         for (int i = 0; i < Array.getLength(value); i++) {
             if (builder.length() > 1) {
                 builder.append(", ");
             }
-            Object o = Array.get(value, i);
-            builder.append(Converter.fromUtf8(serializers.getUnsafe(o.getClass()).serialize(o)));
+            final Object o = Array.get(value, i);
+            builder.append(serializers.getUnsafe(o.getClass()).serialize(o));
         }
         builder.append("]");
-        return Converter.toUtf8(builder.toString());
+        return builder.toString();
     }
 }

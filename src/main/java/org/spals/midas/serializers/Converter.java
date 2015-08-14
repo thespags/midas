@@ -2,7 +2,7 @@ package org.spals.midas.serializers;
 
 import java.nio.charset.StandardCharsets;
 
-public class Converter {
+class Converter {
 
     private Converter() {
     }

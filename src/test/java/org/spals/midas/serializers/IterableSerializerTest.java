@@ -9,29 +9,29 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.spals.midas.serializers.ByteArrayMatcher.isBytes;
+import static org.hamcrest.Matchers.is;
 
 public class IterableSerializerTest {
 
     @Test
     public void testSetSerialize() {
         final Set<String> set = ImmutableSet.of("foo", "bar");
-        final byte[] actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(set);
-        assertThat(actual, isBytes("{foo, bar}"));
+        final String actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(set);
+        assertThat(actual, is("{foo, bar}"));
     }
 
     @Test
     public void testListSerialize() {
         final List<String> list = ImmutableList.of("foo", "bar");
-        final byte[] actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(list);
-        assertThat(actual, isBytes("[foo, bar]"));
+        final String actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(list);
+        assertThat(actual, is("[foo, bar]"));
     }
 
     @Test
     public void testRandomIterableSerialize() {
         final Foo<String> foo = new Foo<>(ImmutableList.of("foo", "bar"));
-        final byte[] actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(foo);
-        assertThat(actual, isBytes("(foo, bar)"));
+        final String actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(foo);
+        assertThat(actual, is("(foo, bar)"));
     }
 
     /**
@@ -41,7 +41,7 @@ public class IterableSerializerTest {
 
         private final List<T> list;
 
-        public Foo(List<T> list) {
+        public Foo(final List<T> list) {
             this.list = list;
         }
 

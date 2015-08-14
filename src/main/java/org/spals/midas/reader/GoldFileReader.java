@@ -7,5 +7,7 @@ import java.io.IOException;
  */
 public interface GoldFileReader {
 
-    byte[] readGoldFile(String goldFileLocation) throws IOException;
+    byte[] read() throws IOException;
+
+    boolean exists(String location);
 }

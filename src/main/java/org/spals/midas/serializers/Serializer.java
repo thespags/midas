@@ -1,5 +1,8 @@
 package org.spals.midas.serializers;
 
+/**
+ * Returns a string value from a given input
+ */
 public interface Serializer<T> {
-    byte[] serialize(T input);
+    String serialize(T input);
 }

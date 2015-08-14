@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
+import static com.googlecode.catchexception.apis.CatchExceptionHamcrestMatchers.hasMessage;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.spals.midas.serializers.ByteArrayMatcher.isBytes;
+import static org.hamcrest.Matchers.*;
 
-/**
- * TODO test for default serializer
- * TODO test for null
- */
 public class ReflectionSerializerTest {
+
     @Test
     public void testSerialize() {
-        final byte[] actual = ReflectionSerializer.builder()
+        final String actual = ReflectionSerializer.builder()
             .registerJava()
             .build()
             .serialize(new Foo());
@@ -43,30 +43,128 @@ public class ReflectionSerializerTest {
                 "stringSet = [a, b, c]\n" +
                 "intSet = {4, 2, 6}\n" +
                 "map = (foo->1)\n";
-        assertThat(actual, isBytes(expected));
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void testRegisterField() {
+        final String actual = ReflectionSerializer.builder()
+            .registerField("littleInt")
+            .registerJava()
+            .build()
+            .serialize(new Foo());
+        final String expected = "littleInt = 0\n";
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void testRegisterFields() {
+        final String actual = ReflectionSerializer.builder()
+            .registerFields("littleInt", "bigInt")
+            .registerJava()
+            .build()
+            .serialize(new Foo());
+        final String expected =
+            "littleInt = 0\n" +
+                "bigInt = 1\n";
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void testRegisterBadField() {
+        final Serializer<Foo> serializer = ReflectionSerializer.builder()
+            .registerFields("nonExistentField")
+            .registerJava()
+            .build();
+        catchException(serializer).serialize(new Foo());
+        assertThat(
+            caughtException(),
+            allOf(
+                instanceOf(IllegalStateException.class),
+                hasMessage("unmatched fields: [nonExistentField]")
+            )
+        );
+    }
+
+    @Test
+    public void testRegisterSerializer() {
+        final String actual = ReflectionSerializer.builder()
+            .register(
+                Foo.class,
+                input -> "Foo Class serializer"
+            )
+            .build()
+            .serialize(new Default());
+        assertThat(actual, is("foo = Foo Class serializer\n"));
+    }
+
+    @Test
+    public void testDefaultSerializer() {
+        final String actual = ReflectionSerializer.builder()
+            .registerDefault(Serializers.of())
+            .build()
+            .serialize(new Default());
+        assertThat(actual, is("foo = Foo\n"));
+    }
+
+    @Test
+    public void testWriteNull() {
+        final String actual = ReflectionSerializer.builder()
+            .registerDefault(Serializers.of())
+            .writeNull()
+            .build()
+            .serialize(new Default());
+        final String value =
+            "foo = Foo\n" +
+                "nullFoo = <null>\n";
+        assertThat(actual, is(value));
+    }
+
+    @Test
+    public void testNoDefaultSerializer() {
+        final Serializer<Default> serializer = ReflectionSerializer.builder()
+            .build();
+        catchException(serializer).serialize(new Default());
+        assertThat(
+            caughtException(),
+            allOf(
+                instanceOf(NullPointerException.class),
+                hasMessage("missing serializer: class org.spals.midas.serializers.ReflectionSerializerTest$Foo")
+            )
+        );
+    }
+
+    @SuppressWarnings("unused")
+    private static class Default {
+        private final Foo foo = new Foo();
+        private final Foo nullFoo = null;
     }
 
     @SuppressWarnings({"unused", "MismatchedReadAndWriteOfArray"})
     private static class Foo {
-        private int littleInt = 0;
-        private Integer bigInt = 1;
-        private char littleChar = 2;
-        private Character bigChar = 3;
-        private long littleLong = 4;
-        private Long bigLong = 5L;
-        private double littleDouble = 6;
-        private Double bigDouble = 6.0;
-        private float littleFloat = 7;
-        private Float bigFloat = 8F;
-        private short littleShort = 9;
-        private Short bigShort = 10;
-        private boolean littleBoolean = true;
-        private Boolean bigBoolean = false;
-        private String string = "foo";
+        private final int littleInt = 0;
+        private final Integer bigInt = 1;
+        private final char littleChar = 2;
+        private final Character bigChar = 3;
+        private final long littleLong = 4;
+        private final Long bigLong = 5L;
+        private final double littleDouble = 6;
+        private final Double bigDouble = 6.0;
+        private final float littleFloat = 7;
+        private final Float bigFloat = 8F;
+        private final short littleShort = 9;
+        private final Short bigShort = 10;
+        private final boolean littleBoolean = true;
+        private final Boolean bigBoolean = false;
+        private final String string = "foo";
 
-        private int[] intArray = new int[]{1, 3, 5};
-        private List<String> stringSet = Lists.newArrayList("a", "b", "c");
-        private Set<Integer> intSet = Sets.newHashSet(2, 4, 6);
-        private Map<String, Integer> map = ImmutableMap.of("foo", 1);
+        private final int[] intArray = new int[]{1, 3, 5};
+        private final List<String> stringSet = Lists.newArrayList("a", "b", "c");
+        private final Set<Integer> intSet = Sets.newHashSet(2, 4, 6);
+        private final Map<String, Integer> map = ImmutableMap.of("foo", 1);
+
+        public String toString() {
+            return "Foo";
+        }
     }
 }

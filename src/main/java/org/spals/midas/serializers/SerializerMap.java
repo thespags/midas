@@ -5,6 +5,12 @@ import com.google.common.base.Preconditions;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A mapping of types to their serializer.
+ * Provides default behavior for serializes that were specified.
+ * <br>1. Arrays, return the array serializer
+ * <br>2. If no exact class was found, it will use assignability to determine the next best serializer
+ */
 class SerializerMap {
 
     private final Map<Class<?>, Serializer<?>> serializers;
@@ -19,7 +25,7 @@ class SerializerMap {
         return new SerializerMap();
     }
 
-    public <T> SerializerMap put(Class<T> clazz, Serializer<T> serializer) {
+    <T> SerializerMap put(final Class<T> clazz, final Serializer<T> serializer) {
         Preconditions.checkNotNull(clazz, "null class provided");
         Preconditions.checkNotNull(serializer, "null serializer provided");
         Preconditions.checkArgument(!serializers.containsKey(clazz), "duplicate class: " + clazz);
@@ -27,7 +33,7 @@ class SerializerMap {
         return this;
     }
 
-    <T> SerializerMap putIfMissing(Class<T> clazz, Serializer<T> serializer) {
+    <T> SerializerMap putIfMissing(final Class<T> clazz, final Serializer<T> serializer) {
         Preconditions.checkNotNull(clazz, "null class provided");
         Preconditions.checkNotNull(serializer, "null serializer provided");
         if (!serializers.containsKey(clazz)) {
@@ -37,11 +43,11 @@ class SerializerMap {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Serializer<T> get(Class<T> clazz) {
+    <T> Serializer<T> get(final Class<T> clazz) {
         return (Serializer<T>) getUnsafe(clazz);
     }
 
-    Serializer getUnsafe(Class<?> clazz) {
+    Serializer getUnsafe(final Class<?> clazz) {
         if (serializers.containsKey(clazz)) {
             return serializers.get(clazz);
         }
@@ -49,15 +55,18 @@ class SerializerMap {
             return arraySerializer;
         }
         // No exact class, try to find an assignable one.
-        for (Map.Entry<Class<?>, Serializer<?>> entry : serializers.entrySet()) {
+        for (final Map.Entry<Class<?>, Serializer<?>> entry : serializers.entrySet()) {
             if (entry.getKey().isAssignableFrom(clazz)) {
                 return entry.getValue();
             }
         }
-        throw new IllegalArgumentException("missing serializer: " + clazz);
+        return null;
     }
 
-    public SerializerMap putJava() {
+    /**
+     * Adds primitive serializers, plus String, Map, and Iterable.
+     */
+    SerializerMap putJava() {
         putIfMissing(boolean.class, Serializers.of());
         putIfMissing(Boolean.class, Serializers.of());
 
