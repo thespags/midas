@@ -1,18 +1,13 @@
 package org.spals.midas;
 
-import org.spals.midas.reader.ClasspathGoldFileReader;
-import org.spals.midas.reader.FilesystemGoldFileReader;
 import org.spals.midas.reader.GoldFileReader;
 import org.spals.midas.reader.GoldFileReaders;
 import org.spals.midas.serializers.ReflectionSerializer;
 import org.spals.midas.serializers.Serializer;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author tkral
@@ -31,12 +26,12 @@ public class GoldFileTest<T> {
         return new GoldFileTest<>();
     }
 
-    public GoldFileTest<T> withClassPathReader() {
-        return withReader(GoldFileReaders.CLASS_PATH);
+    public GoldFileTest<T> withClassPathReader(final String location) {
+        return withReader(GoldFileReaders.classPathReader(location));
     }
 
-    public GoldFileTest<T> withFileSystemReader() {
-        return withReader(GoldFileReaders.FILE_SYSTEM);
+    public GoldFileTest<T> withFileSystemReader(final String location) {
+        return withReader(GoldFileReaders.fileSystemReader(location));
     }
 
     public GoldFileTest<T> withReader(final GoldFileReader reader) {
@@ -45,8 +40,7 @@ public class GoldFileTest<T> {
     }
 
     public GoldFileTest<T> withDefaultSerializer() {
-        this.serializer = ReflectionSerializer.builder().registerJava().build();
-        return this;
+        return withSerializer(ReflectionSerializer.builder().registerJava().build());
     }
 
     public GoldFileTest<T> withSerializer(final Serializer<T> serializer) {
@@ -57,7 +51,7 @@ public class GoldFileTest<T> {
     public void dryRun(final T object) {
         byte[] newBytes = serializer.serialize(object).getBytes(StandardCharsets.UTF_8);
 
-        if (reader.exists(goldFileLocation)) {
+        if (reader.exists()) {
             //diff
             reader.create();
         } else {

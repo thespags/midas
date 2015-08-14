@@ -9,5 +9,5 @@ public interface GoldFileReader {
 
     byte[] read() throws IOException;
 
-    boolean exists(String location);
+    boolean exists();
 }
