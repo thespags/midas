@@ -1,7 +1,5 @@
 package org.spals.midas.reader;
 
-import java.io.IOException;
-
 /**
  * @author tkral
  */

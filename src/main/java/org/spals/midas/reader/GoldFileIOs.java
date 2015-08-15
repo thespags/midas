@@ -7,17 +7,16 @@ import org.spals.midas.GoldFileException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author spags
  */
 public final class GoldFileIOs {
+
+    private GoldFileIOs() {
+    }
 
     public static GoldFileIO classPath(final Class<?> clazz, final String location) {
         final InputStream inputStream = clazz.getClassLoader().getResourceAsStream(location);
@@ -29,7 +28,25 @@ public final class GoldFileIOs {
         return new FileSystemGoldFileIO(location, file);
     }
 
-    private GoldFileIOs() {
+    private static void writeFile(final File file, final byte[] newBytes) {
+        try {
+            Files.write(file.toPath(), newBytes);
+        } catch (final IOException x) {
+            throw new GoldFileException(file.getAbsolutePath() + " could not be written", x);
+        }
+    }
+
+    private static void createFile(final File file) {
+        if (!file.mkdirs()) {
+            throw new GoldFileException(file.getAbsolutePath() + " could not be created");
+        }
+        try {
+            if (!file.createNewFile()) {
+                throw new GoldFileException(file.getAbsolutePath() + " could not be created");
+            }
+        } catch (final IOException x) {
+            throw new GoldFileException(file.getAbsolutePath() + " could not be created", x);
+        }
     }
 
     /**
@@ -117,28 +134,6 @@ public final class GoldFileIOs {
         @Override
         public void write(final byte[] newBytes) {
             writeFile(file, newBytes);
-        }
-    }
-
-    private static void writeFile(final File file, final byte[] newBytes) {
-        try {
-            Files.write(file.toPath(), newBytes);
-        } catch (final IOException x) {
-            throw new GoldFileException(file.getAbsolutePath() + " could not be written", x);
-        }
-
-    }
-
-    private static void createFile(final File file) {
-        if (!file.mkdirs()) {
-            throw new GoldFileException(file.getAbsolutePath() + " could not be created");
-        }
-        try {
-            if (!file.createNewFile()) {
-                throw new GoldFileException(file.getAbsolutePath() + " could not be created");
-            }
-        } catch (final IOException x) {
-            throw new GoldFileException(file.getAbsolutePath() + " could not be created", x);
         }
     }
 }

@@ -5,7 +5,7 @@ package org.spals.midas.serializers;
  */
 public final class Serializers {
 
-    public static final Serializer<Object> OBJECT = new ToStringSerializer<>();
+    private static final Serializer<Object> OBJECT = new ToStringSerializer<>();
 
     private Serializers() {
     }
