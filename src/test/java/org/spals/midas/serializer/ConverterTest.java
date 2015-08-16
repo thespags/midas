@@ -1,11 +1,11 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
 import org.testng.annotations.Test;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class ConverterTest {
 

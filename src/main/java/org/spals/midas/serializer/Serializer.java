@@ -1,4 +1,4 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
 /**
  * Returns a string value from a given input

@@ -1,4 +1,4 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
 import com.google.common.collect.ImmutableMap;
 import org.testng.annotations.Test;

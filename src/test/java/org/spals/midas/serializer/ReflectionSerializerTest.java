@@ -1,8 +1,6 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -129,7 +127,7 @@ public class ReflectionSerializerTest {
             caughtException(),
             allOf(
                 instanceOf(NullPointerException.class),
-                hasMessage("missing serializer: class org.spals.midas.serializers.ReflectionSerializerTest$Foo")
+                hasMessage("missing serializer: class org.spals.midas.serializer.ReflectionSerializerTest$Foo")
             )
         );
     }
@@ -158,9 +156,9 @@ public class ReflectionSerializerTest {
         private final Boolean bigBoolean = false;
         private final String string = "foo";
 
-        private final int[] intArray = new int[]{1, 3, 5};
-        private final List<String> stringSet = Lists.newArrayList("a", "b", "c");
-        private final Set<Integer> intSet = Sets.newHashSet(2, 4, 6);
+        private final int[] intArray = new int[] {1, 3, 5};
+        private final List<String> stringSet = ImmutableList.of("a", "b", "c");
+        private final Set<Integer> intSet = ImmutableSet.of(2, 4, 6);
         private final Map<String, Integer> map = ImmutableMap.of("foo", 1);
 
         public String toString() {

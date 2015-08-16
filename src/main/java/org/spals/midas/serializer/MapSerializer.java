@@ -1,4 +1,4 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
 import java.util.Map;
 import java.util.stream.Collectors;

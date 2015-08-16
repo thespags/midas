@@ -1,6 +1,6 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
-import com.google.common.base.Preconditions;
+import org.spals.midas.util.Preconditions;
 
 import java.util.Arrays;
 
@@ -12,7 +12,7 @@ class ArraySerializer<T> implements Serializer<T[]> {
     private final IterableSerializer serializer;
 
     public ArraySerializer(final SerializerMap serializers) {
-        Preconditions.checkNotNull(serializers);
+        Preconditions.checkNotNull(serializers, "bad serializer map");
         this.serializer = new IterableSerializer(serializers);
     }
 

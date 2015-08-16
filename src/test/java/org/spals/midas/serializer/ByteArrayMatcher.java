@@ -1,4 +1,4 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

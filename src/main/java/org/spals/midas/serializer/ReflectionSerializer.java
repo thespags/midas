@@ -1,6 +1,6 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
-import com.google.common.base.Preconditions;
+import org.spals.midas.util.Preconditions;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * A serializer that uses reflection to print all non null field values for an entity. The serializer is customizable
  * and should only be used for a top level call to serialize, ie don't register a serializer of this type for a class.
- * <br>You can register default java serializers {@link Builder#registerJava()}
+ * <br>You can register default java serializer {@link Builder#registerJava()}
  * <br>You can register a specific class type serializer {@link Builder#register(Class, Serializer)}
  * <br>You can register a default serializer if no specific one is found {@link Builder#registerDefault(Serializer)}
  * <br>You can specify which field(s) to serialize {@link Builder#registerField(String)} or {@link Builder#registerFields(String...)}

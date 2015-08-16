@@ -1,4 +1,4 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
 /**
  * Provides a factory for standard serializes.

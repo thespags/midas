@@ -1,4 +1,4 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
 /**
  * Calls {@link #toString()} for a given type T.

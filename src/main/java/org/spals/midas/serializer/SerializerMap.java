@@ -1,6 +1,6 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
-import com.google.common.base.Preconditions;
+import org.spals.midas.util.Preconditions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -64,7 +64,7 @@ class SerializerMap {
     }
 
     /**
-     * Adds primitive serializers, plus String, Map, and Iterable.
+     * Adds primitive serializer, plus String, Map, and Iterable.
      */
     SerializerMap putJava() {
         putIfMissing(boolean.class, Serializers.of());

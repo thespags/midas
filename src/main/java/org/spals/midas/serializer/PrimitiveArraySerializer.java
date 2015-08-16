@@ -1,6 +1,6 @@
-package org.spals.midas.serializers;
+package org.spals.midas.serializer;
 
-import com.google.common.base.Preconditions;
+import org.spals.midas.util.Preconditions;
 
 import java.lang.reflect.Array;
 
@@ -9,7 +9,7 @@ class PrimitiveArraySerializer implements Serializer<Object> {
     private final SerializerMap serializers;
 
     public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Preconditions.checkNotNull(serializers);
+        Preconditions.checkNotNull(serializers, "bad serializer map");
         this.serializers = serializers;
     }
 

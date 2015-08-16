@@ -1,9 +1,9 @@
 package org.spals.midas.reader;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.ByteStreams;
 import org.spals.midas.GoldFileException;
+import org.spals.midas.util.VisibleForTesting;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,7 +68,11 @@ public final class GoldFileIOs {
         @Override
         public byte[] read() {
             try (final InputStream stream = inputStream) {
-                return ByteStreams.toByteArray(stream);
+                final byte[] bytes = new byte[stream.available()];
+                if (stream.read(bytes) != bytes.length) {
+                    throw new GoldFileException(location + " could not be read");
+                };
+                return bytes;
             } catch (final IOException x) {
                 throw new GoldFileException(location + " could not be read", x);
             }

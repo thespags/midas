@@ -1,15 +1,15 @@
 package org.spals.midas;
 
-import com.google.common.base.Preconditions;
 import difflib.Chunk;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 import org.spals.midas.reader.GoldFileIO;
 import org.spals.midas.reader.GoldFileIOs;
-import org.spals.midas.serializers.ReflectionSerializer;
-import org.spals.midas.serializers.Serializer;
-import org.spals.midas.serializers.Serializers;
+import org.spals.midas.serializer.ReflectionSerializer;
+import org.spals.midas.serializer.Serializer;
+import org.spals.midas.serializer.Serializers;
+import org.spals.midas.util.Preconditions;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class GoldFile<T> {
     }
 
     public static <T> GoldFile<T> create(final Class<T> goldFileType) {
-        Preconditions.checkNotNull(goldFileType);
+        Preconditions.checkNotNull(goldFileType, "bad type");
         return new GoldFile<>();
     }
 
@@ -37,12 +37,13 @@ public class GoldFile<T> {
     }
 
     public GoldFile<T> withClassPathReader(final Class<?> clazz, final String location) {
-        Preconditions.checkNotNull(location);
+        Preconditions.checkNotNull(clazz, "bad clazz");
+        Preconditions.checkNotNull(location, "bad location");
         return withReader(GoldFileIOs.classPath(clazz, location));
     }
 
     public GoldFile<T> withFileSystemReader(final String location) {
-        Preconditions.checkNotNull(location);
+        Preconditions.checkNotNull(location, "bad location");
         return withReader(GoldFileIOs.fileSystem(location));
     }
 
