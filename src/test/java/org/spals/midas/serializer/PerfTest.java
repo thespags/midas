@@ -1,5 +1,10 @@
 package org.spals.midas.serializer;
 
+/**
+ * Comparing results of primitive array vs object array.
+ *
+ * @author spags
+ */
 public class PerfTest {
 
     public void testFoo() {

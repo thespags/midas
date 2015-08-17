@@ -1,18 +1,19 @@
 package org.spals.midas.serializer;
 
-import org.spals.midas.util.Preconditions;
-
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Defers logic to {@link IterableSerializer}, as a list.
+ *
+ * @author spags
  */
 class ArraySerializer<T> implements Serializer<T[]> {
 
     private final IterableSerializer serializer;
 
     public ArraySerializer(final SerializerMap serializers) {
-        Preconditions.checkNotNull(serializers, "bad serializer map");
+        Objects.requireNonNull(serializers, "bad serializer map");
         this.serializer = new IterableSerializer(serializers);
     }
 

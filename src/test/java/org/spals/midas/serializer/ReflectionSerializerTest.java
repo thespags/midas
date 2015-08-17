@@ -1,8 +1,11 @@
 package org.spals.midas.serializer;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +16,9 @@ import static com.googlecode.catchexception.apis.CatchExceptionHamcrestMatchers.
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+/**
+ * @author spags
+ */
 public class ReflectionSerializerTest {
 
     @Test
@@ -39,7 +45,7 @@ public class ReflectionSerializerTest {
                 "string = foo\n" +
                 "intArray = [1, 3, 5]\n" +
                 "stringSet = [a, b, c]\n" +
-                "intSet = {4, 2, 6}\n" +
+                "intSet = {2, 4, 6}\n" +
                 "map = (foo->1)\n";
         assertThat(actual, is(expected));
     }
@@ -156,9 +162,10 @@ public class ReflectionSerializerTest {
         private final Boolean bigBoolean = false;
         private final String string = "foo";
 
-        private final int[] intArray = new int[] {1, 3, 5};
+        private final int[] intArray = new int[]{1, 3, 5};
         private final List<String> stringSet = ImmutableList.of("a", "b", "c");
-        private final Set<Integer> intSet = ImmutableSet.of(2, 4, 6);
+        // make sure the order of the set is consistent.
+        private final Set<Integer> intSet = Sets.newLinkedHashSet(Arrays.asList(2, 4, 6));
         private final Map<String, Integer> map = ImmutableMap.of("foo", 1);
 
         public String toString() {

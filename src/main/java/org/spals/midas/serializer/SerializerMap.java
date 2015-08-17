@@ -4,12 +4,15 @@ import org.spals.midas.util.Preconditions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A mapping of types to their serializer.
  * Provides default behavior for serializes that were specified.
  * <br>1. Arrays, return the array serializer
  * <br>2. If no exact class was found, it will use assignability to determine the next best serializer
+ *
+ * @author spags
  */
 class SerializerMap {
 
@@ -26,16 +29,16 @@ class SerializerMap {
     }
 
     <T> SerializerMap put(final Class<T> clazz, final Serializer<T> serializer) {
-        Preconditions.checkNotNull(clazz, "null class provided");
-        Preconditions.checkNotNull(serializer, "null serializer provided");
+        Objects.requireNonNull(clazz, "null class provided");
+        Objects.requireNonNull(serializer, "null serializer provided");
         Preconditions.checkArgument(!serializers.containsKey(clazz), "duplicate class: " + clazz);
         serializers.put(clazz, serializer);
         return this;
     }
 
     <T> SerializerMap putIfMissing(final Class<T> clazz, final Serializer<T> serializer) {
-        Preconditions.checkNotNull(clazz, "null class provided");
-        Preconditions.checkNotNull(serializer, "null serializer provided");
+        Objects.requireNonNull(clazz, "null class provided");
+        Objects.requireNonNull(serializer, "null serializer provided");
         if (!serializers.containsKey(clazz)) {
             serializers.put(clazz, serializer);
         }

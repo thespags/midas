@@ -1,10 +1,11 @@
 package org.spals.midas.serializer;
 
-import org.spals.midas.util.Preconditions;
+import org.spals.midas.GoldFileException;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -15,6 +16,8 @@ import java.util.Set;
  * <br>You can register a default serializer if no specific one is found {@link Builder#registerDefault(Serializer)}
  * <br>You can specify which field(s) to serialize {@link Builder#registerField(String)} or {@link Builder#registerFields(String...)}
  * <br>You can specify null fields to be written as '&lt;null&gt;' {@link Builder#writeNull}
+ *
+ * @author spags
  */
 public final class ReflectionSerializer<T> implements Serializer<T> {
 
@@ -66,7 +69,7 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
                 }
             } catch (final IllegalAccessException e) {
                 // This shouldn't happen because we set accessible to true.
-                throw new IllegalStateException("Couldn't access field " + field.getName());
+                throw new GoldFileException("Couldn't access field " + field.getName());
             }
         }
         if (filterFields && !filteredFields.isEmpty()) {
@@ -78,7 +81,7 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
     private Serializer getSerializer(final Class clazz) {
         final Serializer<?> serializer = serializers.get(clazz);
         if (serializer == null) {
-            return Preconditions.checkNotNull(defaultSerializer, "missing serializer: " + clazz);
+            return Objects.requireNonNull(defaultSerializer, "missing serializer: " + clazz);
         }
         return serializer;
     }

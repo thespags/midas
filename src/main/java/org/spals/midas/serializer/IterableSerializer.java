@@ -11,6 +11,8 @@ import java.util.stream.StreamSupport;
  * <br>Sets will be marked with {, }
  * <br>Lists will be marked with [, ]
  * <br>Any other iterable will be marked with (, )
+ *
+ * @author spags
  */
 class IterableSerializer implements Serializer<Iterable> {
 

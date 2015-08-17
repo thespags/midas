@@ -7,6 +7,8 @@ import java.util.stream.StreamSupport;
 /**
  * For a given {@link Map}<K, V>, this will use the {@link Serializer} provided for K, V to serialize.
  * <br>This will be represented as (serialize(K) => serialize(V), ...)
+ *
+ * @author spags
  */
 class MapSerializer implements Serializer<Map> {
 

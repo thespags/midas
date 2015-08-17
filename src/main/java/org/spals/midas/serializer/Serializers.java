@@ -1,7 +1,9 @@
 package org.spals.midas.serializer;
 
 /**
- * Provides a factory for standard serializes.
+ * Provides a factory for standard serializers.
+ *
+ * @author spags
  */
 public final class Serializers {
 

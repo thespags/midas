@@ -1,15 +1,19 @@
 package org.spals.midas.serializer;
 
-import org.spals.midas.util.Preconditions;
-
 import java.lang.reflect.Array;
+import java.util.Objects;
 
+/**
+ * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
+ *
+ * @author spags
+ */
 class PrimitiveArraySerializer implements Serializer<Object> {
 
     private final SerializerMap serializers;
 
     public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Preconditions.checkNotNull(serializers, "bad serializer map");
+        Objects.requireNonNull(serializers, "bad serializer map");
         this.serializers = serializers;
     }
 
