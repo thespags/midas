@@ -40,7 +40,7 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
     }
 
     @Override
-    public String serialize(final T input) {
+    public byte[] serialize(final T input) {
         final Field[] fields = input.getClass().getDeclaredFields();
         final StringBuilder builder = new StringBuilder();
         for (final Field field : fields) {
@@ -60,10 +60,10 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
                         final Class clazz = field.getType();
 
                         //noinspection unchecked
-                        builder.append(getSerializer(clazz).serialize(fieldValue));
+                        builder.append(Strings.decode(getSerializer(clazz).serialize(fieldValue)));
                     } else {
                         // its null so emit this placeholder
-                        builder.append("<null>");
+                        builder.append(Strings.NULL);
                     }
                     builder.append("\n");
                 }
@@ -75,7 +75,7 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
         if (filterFields && !filteredFields.isEmpty()) {
             throw new IllegalStateException("unmatched fields: " + filteredFields);
         }
-        return builder.toString();
+        return Strings.encode(builder.toString());
     }
 
     private Serializer getSerializer(final Class clazz) {

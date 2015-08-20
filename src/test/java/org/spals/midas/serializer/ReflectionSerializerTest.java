@@ -14,7 +14,9 @@ import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static com.googlecode.catchexception.apis.CatchExceptionHamcrestMatchers.hasMessage;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.spals.midas.serializer.ByteMatcher.bytes;
 
 /**
  * @author spags
@@ -23,7 +25,7 @@ public class ReflectionSerializerTest {
 
     @Test
     public void testSerialize() {
-        final String actual = ReflectionSerializer.builder()
+        final byte[] actual = ReflectionSerializer.builder()
             .registerJava()
             .build()
             .serialize(new Foo());
@@ -46,24 +48,24 @@ public class ReflectionSerializerTest {
                 "intArray = [1, 3, 5]\n" +
                 "stringSet = [a, b, c]\n" +
                 "intSet = {2, 4, 6}\n" +
-                "map = (foo->1)\n";
-        assertThat(actual, is(expected));
+                "map = (foo -> 1)\n";
+        assertThat(actual, bytes(expected));
     }
 
     @Test
     public void testRegisterField() {
-        final String actual = ReflectionSerializer.builder()
+        final byte[] actual = ReflectionSerializer.builder()
             .registerField("littleInt")
             .registerJava()
             .build()
             .serialize(new Foo());
         final String expected = "littleInt = 0\n";
-        assertThat(actual, is(expected));
+        assertThat(actual, bytes(expected));
     }
 
     @Test
     public void testRegisterFields() {
-        final String actual = ReflectionSerializer.builder()
+        final byte[] actual = ReflectionSerializer.builder()
             .registerFields("littleInt", "bigInt")
             .registerJava()
             .build()
@@ -71,7 +73,7 @@ public class ReflectionSerializerTest {
         final String expected =
             "littleInt = 0\n" +
                 "bigInt = 1\n";
-        assertThat(actual, is(expected));
+        assertThat(actual, bytes(expected));
     }
 
     @Test
@@ -92,28 +94,28 @@ public class ReflectionSerializerTest {
 
     @Test
     public void testRegisterSerializer() {
-        final String actual = ReflectionSerializer.builder()
+        final byte[] actual = ReflectionSerializer.builder()
             .register(
                 Foo.class,
-                input -> "Foo Class serializer"
+                input -> Strings.encode("Foo Class serializer")
             )
             .build()
             .serialize(new Default());
-        assertThat(actual, is("foo = Foo Class serializer\n"));
+        assertThat(actual, bytes("foo = Foo Class serializer\n"));
     }
 
     @Test
     public void testDefaultSerializer() {
-        final String actual = ReflectionSerializer.builder()
+        final byte[] actual = ReflectionSerializer.builder()
             .registerDefault(Serializers.of())
             .build()
             .serialize(new Default());
-        assertThat(actual, is("foo = Foo\n"));
+        assertThat(actual, bytes("foo = Foo\n"));
     }
 
     @Test
     public void testWriteNull() {
-        final String actual = ReflectionSerializer.builder()
+        final byte[] actual = ReflectionSerializer.builder()
             .registerDefault(Serializers.of())
             .writeNull()
             .build()
@@ -121,7 +123,7 @@ public class ReflectionSerializerTest {
         final String value =
             "foo = Foo\n" +
                 "nullFoo = <null>\n";
-        assertThat(actual, is(value));
+        assertThat(actual, bytes(value));
     }
 
     @Test

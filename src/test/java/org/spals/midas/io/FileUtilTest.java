@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.is;
 public class FileUtilTest {
 
     private static final Path FOO = Paths.get("foo");
-    private static final Path BAD_PATH = Paths.get("a//a");
+    private static final Path BAD_PATH = Paths.get("/a//a");
     private static final FileUtil files = new FileUtil();
 
     @Test

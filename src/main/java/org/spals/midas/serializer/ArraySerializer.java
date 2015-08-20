@@ -18,7 +18,7 @@ class ArraySerializer<T> implements Serializer<T[]> {
     }
 
     @Override
-    public String serialize(final T[] array) {
+    public byte[] serialize(final T[] array) {
         return serializer.serialize(Arrays.asList(array));
     }
 }

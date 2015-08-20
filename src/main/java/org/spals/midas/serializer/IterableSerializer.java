@@ -24,7 +24,7 @@ class IterableSerializer implements Serializer<Iterable> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String serialize(final Iterable iterable) {
+    public byte[] serialize(final Iterable iterable) {
         final Collector<CharSequence, ?, String> joiner;
         if (iterable instanceof Set) {
             joiner = Collectors.joining(", ", "{", "}");
@@ -33,8 +33,10 @@ class IterableSerializer implements Serializer<Iterable> {
         } else {
             joiner = Collectors.joining(", ", "(", ")");
         }
-        return StreamSupport.stream(((Iterable<?>) iterable).spliterator(), false)
-            .map(v -> serializers.getUnsafe(v.getClass()).serialize(v))
-            .collect(joiner);
+        return Strings.encode(
+            StreamSupport.stream(((Iterable<?>) iterable).spliterator(), false)
+                .map(v -> Strings.decode(serializers.getUnsafe(v.getClass()).serialize(v)))
+                .collect(joiner)
+        );
     }
 }

@@ -19,7 +19,7 @@ class PrimitiveArraySerializer implements Serializer<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String serialize(final Object value) {
+    public byte[] serialize(final Object value) {
         final StringBuilder builder = new StringBuilder();
         builder.append("[");
         for (int i = 0; i < Array.getLength(value); i++) {
@@ -27,9 +27,9 @@ class PrimitiveArraySerializer implements Serializer<Object> {
                 builder.append(", ");
             }
             final Object o = Array.get(value, i);
-            builder.append(serializers.getUnsafe(o.getClass()).serialize(o));
+            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
         }
         builder.append("]");
-        return builder.toString();
+        return Strings.encode(builder.toString());
     }
 }

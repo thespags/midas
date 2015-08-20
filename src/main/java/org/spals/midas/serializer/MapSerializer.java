@@ -20,14 +20,16 @@ class MapSerializer implements Serializer<Map> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String serialize(final Map map) {
-        return StreamSupport.stream(((Map<?, ?>) map).entrySet().spliterator(), false)
-            .map(
-                entry ->
-                    serializers.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey())
-                        + "->"
-                        + serializers.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue())
-            )
-            .collect(Collectors.joining(", ", "(", ")"));
+    public byte[] serialize(final Map map) {
+        return Strings.encode(
+            StreamSupport.stream(((Map<?, ?>) map).entrySet().spliterator(), false)
+                .map(
+                    entry ->
+                        Strings.decode(serializers.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey()))
+                            + " -> "
+                            + Strings.decode(serializers.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue()))
+                )
+                .collect(Collectors.joining(", ", "(", ")"))
+        );
     }
 }
