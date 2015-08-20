@@ -26,8 +26,6 @@ import java.util.logging.Logger;
 public class GoldFile<T> {
 
     private static final Logger LOGGER = Logger.getLogger(GoldFile.class.getName());
-    private static final String MIDAS_EXT = "midas";
-    private static final String RESULT_EXT = "result";
 
     private final Serializer<T> serializer;
     private final GoldPath goldPath;
@@ -58,7 +56,7 @@ public class GoldFile<T> {
      */
     public void run(final T object, final Path path, final GoldOptions options) {
         final Path fullPath = goldPath.get(path);
-        final Path file = Extensions.add(fullPath, MIDAS_EXT);
+        final Path file = Extensions.add(fullPath, Extensions.MIDAS_EXT);
 
         files.makeParents(file);
         files.createFile(file);
@@ -79,7 +77,7 @@ public class GoldFile<T> {
             }
         } finally {
             if (options.writable()) {
-                final Path resultFile = options.checkout() ? file : Extensions.add(fullPath, RESULT_EXT);
+                final Path resultFile = options.checkout() ? file : Extensions.add(file, Extensions.RESULT_EXT);
                 files.write(resultFile, newBytes);
             }
         }

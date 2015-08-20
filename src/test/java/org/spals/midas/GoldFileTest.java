@@ -70,6 +70,7 @@ public class GoldFileTest {
 
     @SuppressWarnings("unused")
     private static class Foo {
+
         private final String string = "foo";
     }
 }

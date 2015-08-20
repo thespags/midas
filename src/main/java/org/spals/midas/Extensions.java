@@ -10,6 +10,9 @@ import java.nio.file.Paths;
  */
 class Extensions {
 
+    static final String MIDAS_EXT = "midas";
+    static final String RESULT_EXT = "result";
+
     private Extensions() {
     }
 
@@ -24,8 +27,12 @@ class Extensions {
         }
 
         final String name = fileName.substring(0, extensionIndex);
-        final String extension = fileName.substring(extensionIndex);
+        final String extension = fileName.substring(extensionIndex + 1);
 
-        return subPath.resolve(name + "." + ext + extension);
+        // always append after midas
+        if (extension.equals(MIDAS_EXT)) {
+            return subPath.resolve(fileName + "." + ext);
+        }
+        return subPath.resolve(name + "." + ext + "." + extension);
     }
 }

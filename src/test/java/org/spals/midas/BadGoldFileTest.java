@@ -2,6 +2,7 @@ package org.spals.midas;
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.spals.midas.differ.Differ;
 import org.spals.midas.io.FileUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -26,6 +27,8 @@ import static org.mockito.Mockito.when;
  */
 public class BadGoldFileTest {
 
+    @Mock
+    private Differ differ;
     @Mock
     private FileUtil files;
     private Path methodPath;
@@ -76,6 +79,26 @@ public class BadGoldFileTest {
             allOf(
                 instanceOf(GoldFileException.class),
                 hasMessage("\nDiffs: testInsertDiff.midas\n1 >> ExtraNew\n")
+            )
+        );
+    }
+
+    @Test
+    public void testRandomDiff() {
+        gold = GoldFile.<String>builder()
+            .withFileUtil(files)
+            .withDiffer(differ)
+            .build();
+
+        when(differ.diff(any(byte[].class), any(byte[].class))).thenReturn("Hello world!");
+        when(files.readAllBytes(any(Path.class))).thenReturn("foo".getBytes());
+        catchException(gold).run("bar", methodPath);
+
+        assertThat(
+            caughtException(),
+            allOf(
+                instanceOf(GoldFileException.class),
+                hasMessage("\nDiffs: testRandomDiff.midas\nHello world!")
             )
         );
     }
