@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -27,7 +28,7 @@ public class BadGoldFileTest {
 
     @Mock
     private FileUtil files;
-    private Method method;
+    private Path methodPath;
     private GoldFile<String> gold;
 
     @BeforeMethod
@@ -37,13 +38,13 @@ public class BadGoldFileTest {
         this.gold = GoldFile.<String>builder()
             .withFileUtil(files)
             .build();
-        this.method = method;
+        this.methodPath = Paths.get(method.getName());
     }
 
     @Test
     public void testBadDiff() {
         when(files.readAllBytes(any(Path.class))).thenReturn("Barfoo".getBytes());
-        catchException(gold).run("Foobar", method.getName());
+        catchException(gold).run("Foobar", methodPath);
         assertThat(
             caughtException(),
             allOf(
@@ -56,7 +57,7 @@ public class BadGoldFileTest {
     @Test
     public void testDeleteDiff() {
         when(files.readAllBytes(any(Path.class))).thenReturn("Foobar\nExtraOld".getBytes());
-        catchException(gold).run("Foobar", method.getName());
+        catchException(gold).run("Foobar", methodPath);
         assertThat(
             caughtException(),
             allOf(
@@ -69,7 +70,7 @@ public class BadGoldFileTest {
     @Test
     public void testInsertDiff() {
         when(files.readAllBytes(any(Path.class))).thenReturn("Foobar".getBytes());
-        catchException(gold).run("Foobar\nExtraNew", method.getName());
+        catchException(gold).run("Foobar\nExtraNew", methodPath);
         assertThat(
             caughtException(),
             allOf(
@@ -82,6 +83,6 @@ public class BadGoldFileTest {
     @Test
     public void testBadTimestamp() {
         when(files.readAllBytes(any(Path.class))).thenReturn("Foobar".getBytes());
-        gold.run("Foobar", method.getName());
+        gold.run("Foobar", methodPath);
     }
 }

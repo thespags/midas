@@ -3,7 +3,7 @@ package org.spals.midas.io;
 import java.nio.file.Path;
 
 /**
- * Given a path, will properly locate the path in some sort of hierachy.
+ * Given a path, will properly locate the path in some sort of hierarchy.
  *
  * @author spags
  */
