@@ -13,21 +13,50 @@
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spals.midas.util;
-
-import java.lang.reflect.Constructor;
+package org.spals.midas;
 
 /**
+ * The default implementation of {@link GoldOptions}.
+ *
  * @author spags
  */
-public class Tests {
+public final class DefaultGoldOptions implements GoldOptions {
+
+    private boolean writable;
+    private boolean checkout;
+
+    private DefaultGoldOptions() {
+        this.writable = true;
+        this.checkout = true;
+    }
+
+    public static DefaultGoldOptions create() {
+        return new DefaultGoldOptions();
+    }
 
     /**
-     * Lets you call a private constructor in a factory class for test coverage.
+     * Can we overwrite the current file or do we write a back up?
      */
-    public static void testPrivate(final Class<?> clazz) throws Exception {
-        final Constructor<?>[] cons = clazz.getDeclaredConstructors();
-        cons[0].setAccessible(true);
-        cons[0].newInstance((Object[]) null);
+    @Override
+    public boolean checkout() {
+        return checkout;
+    }
+
+    public GoldOptions setCheckout(final boolean checkout) {
+        this.checkout = checkout;
+        return this;
+    }
+
+    /**
+     * Should we actually write a file to the system?
+     */
+    @Override
+    public boolean writable() {
+        return writable;
+    }
+
+    public GoldOptions setWritable(final boolean writable) {
+        this.writable = writable;
+        return this;
     }
 }
