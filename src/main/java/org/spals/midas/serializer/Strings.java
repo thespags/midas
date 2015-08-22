@@ -30,36 +30,45 @@
 
 package org.spals.midas.serializer;
 
-import java.lang.reflect.Array;
-import java.util.Objects;
+import org.spals.midas.util.VisibleForTesting;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
- * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
+ * Attempts some basic interning for encoding, decoding strings as a bi map.
  *
  * @author spags
  */
-class PrimitiveArraySerializer implements Serializer<Object> {
+class Strings {
 
-    private final SerializerMap serializers;
+    public static final String NULL = "<null>";
+    @VisibleForTesting
+    static final Map<String, byte[]> STRING_TO_BYTES = new WeakHashMap<>();
+    @VisibleForTesting
+    static final Map<byte[], String> BYTES_TO_STRING = new WeakHashMap<>();
 
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializers = serializers;
+    private Strings() {
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public byte[] serialize(final Object value) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        for (int i = 0; i < Array.getLength(value); i++) {
-            if (builder.length() > 1) {
-                builder.append(", ");
-            }
-            final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
+    public static String decode(final byte[] bytes) {
+        String value = BYTES_TO_STRING.get(bytes);
+        if (value == null) {
+            value = new String(bytes, StandardCharsets.UTF_8);
+            BYTES_TO_STRING.put(bytes, value);
+            STRING_TO_BYTES.put(value, bytes);
         }
-        builder.append("]");
-        return Strings.encode(builder.toString());
+        return value;
+    }
+
+    public static byte[] encode(final String string) {
+        byte[] value = STRING_TO_BYTES.get(string);
+        if (value == null) {
+            value = string.getBytes();
+            STRING_TO_BYTES.put(string, value);
+            BYTES_TO_STRING.put(value, string);
+        }
+        return value;
     }
 }

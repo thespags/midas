@@ -28,38 +28,50 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spals.midas.serializer;
-
-import java.lang.reflect.Array;
-import java.util.Objects;
+package org.spals.midas;
 
 /**
- * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
+ * The default implementation of {@link GoldOptions}.
  *
  * @author spags
  */
-class PrimitiveArraySerializer implements Serializer<Object> {
+public final class DefaultGoldOptions implements GoldOptions {
 
-    private final SerializerMap serializers;
+    private boolean writable;
+    private boolean checkout;
 
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializers = serializers;
+    private DefaultGoldOptions() {
+        this.writable = true;
+        this.checkout = true;
     }
 
-    @SuppressWarnings("unchecked")
+    public static DefaultGoldOptions create() {
+        return new DefaultGoldOptions();
+    }
+
+    /**
+     * Can we overwrite the current file or do we write a back up?
+     */
     @Override
-    public byte[] serialize(final Object value) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        for (int i = 0; i < Array.getLength(value); i++) {
-            if (builder.length() > 1) {
-                builder.append(", ");
-            }
-            final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
-        }
-        builder.append("]");
-        return Strings.encode(builder.toString());
+    public boolean checkout() {
+        return checkout;
+    }
+
+    public GoldOptions setCheckout(final boolean checkout) {
+        this.checkout = checkout;
+        return this;
+    }
+
+    /**
+     * Should we actually write a file to the system?
+     */
+    @Override
+    public boolean writable() {
+        return writable;
+    }
+
+    public GoldOptions setWritable(final boolean writable) {
+        this.writable = writable;
+        return this;
     }
 }

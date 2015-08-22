@@ -28,38 +28,56 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spals.midas.serializer;
+package org.spals.midas;
 
-import java.lang.reflect.Array;
-import java.util.Objects;
+
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.spals.midas.io.FileUtil;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
- * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
- *
  * @author spags
  */
-class PrimitiveArraySerializer implements Serializer<Object> {
+public class GoldOptionsTest {
 
-    private final SerializerMap serializers;
+    public static final byte[] BYTES = "foo".getBytes();
+    @Mock
+    private FileUtil files;
+    private GoldFile<String> gold;
 
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializers = serializers;
+    @BeforeMethod
+    public void setUp(final Method method) {
+        MockitoAnnotations.initMocks(this);
+
+        this.gold = GoldFile.<String>builder()
+            .withFileUtil(files)
+            .build();
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public byte[] serialize(final Object value) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        for (int i = 0; i < Array.getLength(value); i++) {
-            if (builder.length() > 1) {
-                builder.append(", ");
-            }
-            final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
-        }
-        builder.append("]");
-        return Strings.encode(builder.toString());
+    @Test
+    public void testNotWritable() {
+        when(files.readAllBytes(any(Path.class))).thenReturn(BYTES);
+        gold.run("foo", Paths.get("ignored"), DefaultGoldOptions.create().setWritable(false));
+
+        // write should never have occurred
+        verify(files, times(0)).write(any(Path.class), any(byte[].class));
+    }
+
+    @Test
+    public void testNotCheckout() {
+        when(files.readAllBytes(any(Path.class))).thenReturn(BYTES);
+        gold.run("foo", Paths.get("ignored"), DefaultGoldOptions.create().setCheckout(false));
+
+        // write should be to result file
+        verify(files, times(1)).write(Paths.get("ignored.midas.result"), BYTES);
     }
 }

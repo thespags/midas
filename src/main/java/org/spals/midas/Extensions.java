@@ -28,38 +28,43 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spals.midas.serializer;
+package org.spals.midas;
 
-import java.lang.reflect.Array;
-import java.util.Objects;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
- * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
+ * Utility for adding the midas extension.
  *
  * @author spags
  */
-class PrimitiveArraySerializer implements Serializer<Object> {
+class Extensions {
 
-    private final SerializerMap serializers;
+    static final String MIDAS_EXT = "midas";
+    static final String RESULT_EXT = "result";
 
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializers = serializers;
+    private Extensions() {
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public byte[] serialize(final Object value) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        for (int i = 0; i < Array.getLength(value); i++) {
-            if (builder.length() > 1) {
-                builder.append(", ");
-            }
-            final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
+    public static Path add(final Path path, final String ext) {
+        final String fileName = path.getFileName().toString();
+        final int extensionIndex = fileName.lastIndexOf('.');
+
+        final Path subPath = path.getNameCount() > 1 ? path.subpath(0, path.getNameCount() - 1) : Paths.get("");
+
+        // no extension so just append midas
+        if (extensionIndex == -1) {
+            return subPath.resolve(fileName + "." + ext);
         }
-        builder.append("]");
-        return Strings.encode(builder.toString());
+
+        final String name = fileName.substring(0, extensionIndex);
+        final String extension = fileName.substring(extensionIndex + 1);
+
+        // If midas is the last extension, then add midas.ext
+        // This handles the case if you aren't allow the midas file to be overwritten.
+        if (extension.equals(MIDAS_EXT)) {
+            return subPath.resolve(fileName + "." + ext);
+        }
+        return subPath.resolve(name + "." + ext + "." + extension);
     }
 }

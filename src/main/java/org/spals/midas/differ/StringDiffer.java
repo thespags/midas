@@ -28,38 +28,54 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spals.midas.serializer;
+package org.spals.midas.differ;
 
-import java.lang.reflect.Array;
-import java.util.Objects;
+import difflib.Chunk;
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
- * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
+ * Uses {@link DiffUtils} to properly determine the differences between the old and new data.
  *
  * @author spags
  */
-class PrimitiveArraySerializer implements Serializer<Object> {
+class StringDiffer implements Differ {
 
-    private final SerializerMap serializers;
+    public String diff(final byte[] oldBytes, final byte[] newBytes) {
+        final String[] oldStrings = new String(oldBytes, StandardCharsets.UTF_8).split("\n");
+        final String[] newStrings = new String(newBytes, StandardCharsets.UTF_8).split("\n");
 
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializers = serializers;
+        final Patch<String> patch = DiffUtils.diff(Arrays.asList(oldStrings), Arrays.asList(newStrings));
+
+        final StringBuilder builder = new StringBuilder();
+
+        for (final Delta<String> delta : patch.getDeltas()) {
+            switch (delta.getType()) {
+                case CHANGE:
+                    chunk(builder, delta.getOriginal(), " << ");
+                    chunk(builder, delta.getRevised(), " >> ");
+                    break;
+                case DELETE:
+                    chunk(builder, delta.getOriginal(), " << ");
+                    break;
+                case INSERT:
+                    chunk(builder, delta.getRevised(), " >> ");
+                    break;
+            }
+        }
+        return builder.toString();
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public byte[] serialize(final Object value) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        for (int i = 0; i < Array.getLength(value); i++) {
-            if (builder.length() > 1) {
-                builder.append(", ");
-            }
-            final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
-        }
-        builder.append("]");
-        return Strings.encode(builder.toString());
+    private void chunk(final StringBuilder builder, final Chunk<String> chunk, final String dir) {
+        builder.append(String.format("%s", chunk.getPosition()))
+            .append(dir)
+            .append(StreamSupport.stream(chunk.getLines().spliterator(), false).collect(Collectors.joining("\n")))
+            .append("\n");
     }
 }

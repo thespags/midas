@@ -30,36 +30,36 @@
 
 package org.spals.midas.serializer;
 
-import java.lang.reflect.Array;
-import java.util.Objects;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
+
+import java.util.Arrays;
 
 /**
- * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
+ * Matcher for byte arrays.
  *
  * @author spags
  */
-class PrimitiveArraySerializer implements Serializer<Object> {
+public class ByteMatcher extends TypeSafeDiagnosingMatcher<byte[]> {
 
-    private final SerializerMap serializers;
+    private final String expected;
 
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializers = serializers;
+    public ByteMatcher(final String expected) {
+        this.expected = expected;
     }
 
-    @SuppressWarnings("unchecked")
+    public static ByteMatcher bytes(final String expected) {
+        return new ByteMatcher(expected);
+    }
+
     @Override
-    public byte[] serialize(final Object value) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        for (int i = 0; i < Array.getLength(value); i++) {
-            if (builder.length() > 1) {
-                builder.append(", ");
-            }
-            final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
-        }
-        builder.append("]");
-        return Strings.encode(builder.toString());
+    protected boolean matchesSafely(final byte[] bytes, final Description description) {
+        description.appendText(Strings.decode(bytes));
+        return Arrays.equals(bytes, Strings.encode(expected));
+    }
+
+    @Override
+    public void describeTo(final Description description) {
+        description.appendText(expected);
     }
 }

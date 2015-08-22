@@ -28,38 +28,48 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spals.midas.serializer;
+package org.spals.midas;
 
-import java.lang.reflect.Array;
-import java.util.Objects;
+import org.spals.midas.util.Tests;
+import org.testng.annotations.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
- * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
- *
  * @author spags
  */
-class PrimitiveArraySerializer implements Serializer<Object> {
+public class ExtensionsTest {
 
-    private final SerializerMap serializers;
-
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializers = serializers;
+    @Test
+    public void testPrivate() throws Exception {
+        Tests.testPrivate(Extensions.class);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public byte[] serialize(final Object value) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        for (int i = 0; i < Array.getLength(value); i++) {
-            if (builder.length() > 1) {
-                builder.append(", ");
-            }
-            final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
-        }
-        builder.append("]");
-        return Strings.encode(builder.toString());
+    @Test
+    public void testAddNoExtension() {
+        final Path path = Paths.get("foo");
+        assertThat(Extensions.add(path, "ext").toString(), is("foo.ext"));
+    }
+
+    @Test
+    public void testAddComplexNoExtension() {
+        final Path path = Paths.get("foo", "bar");
+        assertThat(Extensions.add(path, "ext").toString(), is("foo/bar.ext"));
+    }
+
+    @Test
+    public void testAddExtension() {
+        final Path path = Paths.get("foo.txt");
+        assertThat(Extensions.add(path, "ext").toString(), is("foo.ext.txt"));
+    }
+
+    @Test
+    public void testAddComplexExtension() {
+        final Path path = Paths.get("foo", "bar.txt");
+        assertThat(Extensions.add(path, "ext").toString(), is("foo/bar.ext.txt"));
     }
 }
