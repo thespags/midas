@@ -31,21 +31,26 @@
 package net.spals.midas.serializer;
 
 import net.spals.midas.util.Tests;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.lang.ref.WeakReference;
+import java.util.Objects;
+
+import static net.spals.midas.serializer.StringsTest.WeakReferenceMatcher.withWeakReference;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
 
 /**
  * @author spags
  */
 public class StringsTest {
 
-    public static final String FOO = "foo";
-    public static final byte[] BYTES = FOO.getBytes();
+    private static final String FOO = "foo";
+    private static final byte[] BYTES = FOO.getBytes();
 
     @BeforeMethod
     public void setUp() {
@@ -61,16 +66,43 @@ public class StringsTest {
     @Test
     public void testDecode() throws Exception {
         final String decode = Strings.decode(BYTES);
-        assertThat(decode, Matchers.is(FOO));
-        assertThat(Strings.BYTES_TO_STRING, hasEntry(BYTES, FOO));
-        assertThat(Strings.STRING_TO_BYTES, hasEntry(FOO, BYTES));
+        assertThat(decode, is(FOO));
+        assertThat(Strings.BYTES_TO_STRING, hasEntry(is(BYTES), withWeakReference(FOO)));
+        assertThat(Strings.STRING_TO_BYTES, hasEntry(is(FOO), withWeakReference(BYTES)));
     }
 
     @Test
     public void testEncode() throws Exception {
         final byte[] encode = Strings.encode(FOO);
-        MatcherAssert.assertThat(encode, ByteMatcher.bytes(FOO));
-        assertThat(Strings.BYTES_TO_STRING, hasEntry(BYTES, FOO));
-        assertThat(Strings.STRING_TO_BYTES, hasEntry(FOO, BYTES));
+        assertThat(encode, ByteMatcher.bytes(FOO));
+        assertThat(Strings.BYTES_TO_STRING, hasEntry(is(BYTES), withWeakReference(FOO)));
+        assertThat(Strings.STRING_TO_BYTES, hasEntry(is(FOO), withWeakReference(BYTES)));
+    }
+
+    static class WeakReferenceMatcher<T> extends TypeSafeDiagnosingMatcher<WeakReference<T>> {
+
+        private final T value;
+
+        private WeakReferenceMatcher(final T value) {
+            this.value = value;
+        }
+
+        static <T> WeakReferenceMatcher<T> withWeakReference(final T value) {
+            return new WeakReferenceMatcher<>(value);
+        }
+
+        @Override
+        protected boolean matchesSafely(final WeakReference<T> item, final Description mismatchDescription) {
+            if (item == null) {
+                mismatchDescription.appendText("no reference");
+                return false;
+            }
+            return Objects.deepEquals(value, item.get());
+        }
+
+        @Override
+        public void describeTo(final Description description) {
+            description.appendValue(value);
+        }
     }
 }

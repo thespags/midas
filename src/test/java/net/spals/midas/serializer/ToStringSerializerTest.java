@@ -32,8 +32,8 @@ package net.spals.midas.serializer;
 
 import org.testng.annotations.Test;
 
-import static org.junit.Assert.assertThat;
 import static net.spals.midas.serializer.ByteMatcher.bytes;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author spags

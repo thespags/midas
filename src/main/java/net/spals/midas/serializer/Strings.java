@@ -32,6 +32,7 @@ package net.spals.midas.serializer;
 
 import net.spals.midas.util.VisibleForTesting;
 
+import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -45,30 +46,40 @@ class Strings {
 
     public static final String NULL = "<null>";
     @VisibleForTesting
-    static final Map<String, byte[]> STRING_TO_BYTES = new WeakHashMap<>();
+    static final Map<String, WeakReference<byte[]>> STRING_TO_BYTES = new WeakHashMap<>();
     @VisibleForTesting
-    static final Map<byte[], String> BYTES_TO_STRING = new WeakHashMap<>();
+    static final Map<byte[], WeakReference<String>> BYTES_TO_STRING = new WeakHashMap<>();
 
     private Strings() {
     }
 
-    public static String decode(final byte[] bytes) {
-        String value = BYTES_TO_STRING.get(bytes);
-        if (value == null) {
-            value = new String(bytes, StandardCharsets.UTF_8);
-            BYTES_TO_STRING.put(bytes, value);
-            STRING_TO_BYTES.put(value, bytes);
+    public static synchronized String decode(final byte[] bytes) {
+        final WeakReference<String> reference = BYTES_TO_STRING.get(bytes);
+
+        if (reference != null) {
+            final String value = reference.get();
+            if (value != null) {
+                return value;
+            }
         }
+        final String value = new String(bytes, StandardCharsets.UTF_8);
+        BYTES_TO_STRING.put(bytes, new WeakReference<>(value));
+        STRING_TO_BYTES.put(value, new WeakReference<>(bytes));
         return value;
     }
 
-    public static byte[] encode(final String string) {
-        byte[] value = STRING_TO_BYTES.get(string);
-        if (value == null) {
-            value = string.getBytes();
-            STRING_TO_BYTES.put(string, value);
-            BYTES_TO_STRING.put(value, string);
+    public static synchronized byte[] encode(final String string) {
+        final WeakReference<byte[]> reference = STRING_TO_BYTES.get(string);
+
+        if (reference != null) {
+            final byte[] value = reference.get();
+            if (value != null) {
+                return value;
+            }
         }
+        final byte[] value = string.getBytes();
+        BYTES_TO_STRING.put(value, new WeakReference<>(string));
+        STRING_TO_BYTES.put(string, new WeakReference<>(value));
         return value;
     }
 }

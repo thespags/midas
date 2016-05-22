@@ -44,7 +44,7 @@ public class ByteMatcher extends TypeSafeDiagnosingMatcher<byte[]> {
 
     private final String expected;
 
-    public ByteMatcher(final String expected) {
+    private ByteMatcher(final String expected) {
         this.expected = expected;
     }
 
