@@ -42,9 +42,9 @@ import java.util.WeakHashMap;
  *
  * @author spags
  */
-class Strings {
+final class Strings {
 
-    public static final String NULL = "<null>";
+    static final String NULL = "<null>";
     @VisibleForTesting
     static final Map<String, WeakReference<byte[]>> STRING_TO_BYTES = new WeakHashMap<>();
     @VisibleForTesting
@@ -53,7 +53,7 @@ class Strings {
     private Strings() {
     }
 
-    public static synchronized String decode(final byte[] bytes) {
+    static synchronized String decode(final byte[] bytes) {
         final WeakReference<String> reference = BYTES_TO_STRING.get(bytes);
 
         if (reference != null) {
@@ -68,7 +68,7 @@ class Strings {
         return value;
     }
 
-    public static synchronized byte[] encode(final String string) {
+    static synchronized byte[] encode(final String string) {
         final WeakReference<byte[]> reference = STRING_TO_BYTES.get(string);
 
         if (reference != null) {
