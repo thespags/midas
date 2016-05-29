@@ -30,10 +30,10 @@
 
 package net.spals.midas;
 
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import net.spals.midas.differ.Differ;
 import net.spals.midas.io.FileUtil;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -77,7 +77,7 @@ public class BadGoldFileTest {
     @Test
     public void testBadDiff() {
         when(files.readAllBytes(any(Path.class))).thenReturn("Barfoo".getBytes());
-        catchException(gold).run("Foobar", methodPath);
+        catchException(() -> gold.run("Foobar", methodPath));
         assertThat(
             caughtException(),
             allOf(
@@ -90,7 +90,7 @@ public class BadGoldFileTest {
     @Test
     public void testDeleteDiff() {
         when(files.readAllBytes(any(Path.class))).thenReturn("Foobar\nExtraOld".getBytes());
-        catchException(gold).run("Foobar", methodPath);
+        catchException(() -> gold.run("Foobar", methodPath));
         assertThat(
             caughtException(),
             allOf(
@@ -103,7 +103,7 @@ public class BadGoldFileTest {
     @Test
     public void testInsertDiff() {
         when(files.readAllBytes(any(Path.class))).thenReturn("Foobar".getBytes());
-        catchException(gold).run("Foobar\nExtraNew", methodPath);
+        catchException(() -> gold.run("Foobar\nExtraNew", methodPath));
         assertThat(
             caughtException(),
             allOf(
@@ -122,7 +122,7 @@ public class BadGoldFileTest {
 
         when(differ.diff(any(byte[].class), any(byte[].class))).thenReturn("Hello world!");
         when(files.readAllBytes(any(Path.class))).thenReturn("foo".getBytes());
-        catchException(gold).run("bar", methodPath);
+        catchException(() -> gold.run("bar", methodPath));
 
         assertThat(
             caughtException(),

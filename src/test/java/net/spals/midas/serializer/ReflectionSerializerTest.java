@@ -43,10 +43,10 @@ import java.util.Set;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static com.googlecode.catchexception.apis.CatchExceptionHamcrestMatchers.hasMessage;
+import static net.spals.midas.serializer.ByteMatcher.bytes;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
-import static net.spals.midas.serializer.ByteMatcher.bytes;
 
 /**
  * @author spags
@@ -112,7 +112,7 @@ public class ReflectionSerializerTest {
             .registerFields("nonExistentField")
             .registerJava()
             .build();
-        catchException(serializer).serialize(new Foo());
+        catchException(() -> serializer.serialize(new Foo()));
         assertThat(
             caughtException(),
             allOf(
@@ -160,7 +160,7 @@ public class ReflectionSerializerTest {
     public void testNoDefaultSerializer() {
         final Serializer<Default> serializer = ReflectionSerializer.builder()
             .build();
-        catchException(serializer).serialize(new Default());
+        catchException(() -> serializer.serialize(new Default()));
         assertThat(
             caughtException(),
             allOf(

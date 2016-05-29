@@ -60,14 +60,14 @@ public class FileUtilTest {
 
     @Test
     public void testBadReadAllBytes() throws Exception {
-        catchException(files).readAllBytes(BAD_PATH);
+        catchException(() -> files.readAllBytes(BAD_PATH));
         assertThat(caughtException(), instanceOf(GoldFileException.class));
     }
 
     @Test
     public void testBadWrite() throws Exception {
         final byte[] bytes = "Foo".getBytes();
-        catchException(files).write(BAD_PATH, bytes);
+        catchException(() -> files.write(BAD_PATH, bytes));
         assertThat(caughtException(), instanceOf(GoldFileException.class));
     }
 
@@ -80,7 +80,7 @@ public class FileUtilTest {
 
     @Test
     public void testBadMakeDirs() throws Exception {
-        catchException(files).makeDirs(BAD_PATH.toFile());
+        catchException(() -> files.makeDirs(BAD_PATH.toFile()));
         assertThat(caughtException(), instanceOf(GoldFileException.class));
     }
 
@@ -101,13 +101,13 @@ public class FileUtilTest {
 
     @Test
     public void testBadCreateFile() throws Exception {
-        catchException(files).createFile(BAD_PATH);
+        catchException(() -> files.createFile(BAD_PATH));
         assertThat(caughtException(), instanceOf(GoldFileException.class));
     }
 
     @Test
     public void testBadDelete() throws Exception {
-        catchException(files).delete(FOO);
+        catchException(() -> files.delete(FOO));
         assertThat(caughtException(), instanceOf(GoldFileException.class));
     }
 }
