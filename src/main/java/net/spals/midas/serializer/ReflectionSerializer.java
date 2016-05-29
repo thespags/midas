@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -58,11 +58,11 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
     private final Serializer<Object> defaultSerializer;
 
     private ReflectionSerializer(final Builder builder) {
-        this.serializers = builder.serializers;
-        this.writeNull = builder.writeNull;
-        this.defaultSerializer = builder.defaultSerializer;
-        this.filteredFields = builder.filteredFields;
-        this.filterFields = !builder.filteredFields.isEmpty();
+        serializers = builder.serializers;
+        writeNull = builder.writeNull;
+        defaultSerializer = builder.defaultSerializer;
+        filteredFields = builder.filteredFields;
+        filterFields = !builder.filteredFields.isEmpty();
     }
 
     public static Builder builder() {

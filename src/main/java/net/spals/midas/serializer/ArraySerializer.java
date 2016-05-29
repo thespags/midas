@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -44,7 +44,7 @@ class ArraySerializer<T> implements Serializer<T[]> {
 
     public ArraySerializer(final SerializerMap serializers) {
         Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializer = new IterableSerializer(serializers);
+        serializer = new IterableSerializer(serializers);
     }
 
     @Override

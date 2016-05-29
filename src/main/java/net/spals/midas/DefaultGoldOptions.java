@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -41,8 +41,8 @@ public final class DefaultGoldOptions implements GoldOptions {
     private boolean checkout;
 
     private DefaultGoldOptions() {
-        this.writable = true;
-        this.checkout = true;
+        writable = true;
+        checkout = true;
     }
 
     public static DefaultGoldOptions create() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -35,8 +35,6 @@ import org.hamcrest.MatcherAssert;
 import org.testng.annotations.Test;
 
 import java.util.Map;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author spags

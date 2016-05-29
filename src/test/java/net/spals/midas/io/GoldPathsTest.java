@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -46,13 +46,13 @@ public class GoldPathsTest {
 
     @Test
     public void testFullClass() throws IOException {
-        final GoldPath path = GoldPaths.fullClass(GoldPaths.MAVEN, this.getClass());
+        final GoldPath path = GoldPaths.fullClass(GoldPaths.MAVEN, getClass());
         assertThat(path.get(FOO).toString(), is("src/test/resources/net/spals/midas/io/GoldPathsTest/foo"));
     }
 
     @Test
     public void testSimpleClass() {
-        final GoldPath path = GoldPaths.simpleClass(GoldPaths.MAVEN, this.getClass());
+        final GoldPath path = GoldPaths.simpleClass(GoldPaths.MAVEN, getClass());
         assertThat(path.get(FOO).toString(), is("src/test/resources/GoldPathsTest/foo"));
     }
 

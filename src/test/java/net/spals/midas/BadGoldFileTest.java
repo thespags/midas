@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -68,10 +68,10 @@ public class BadGoldFileTest {
     public void setUp(final Method method) {
         MockitoAnnotations.initMocks(this);
 
-        this.gold = GoldFile.<String>builder()
+        gold = GoldFile.<String>builder()
             .withFileUtil(files)
             .build();
-        this.methodPath = Paths.get(method.getName());
+        methodPath = Paths.get(method.getName());
     }
 
     @Test

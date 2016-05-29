@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -30,14 +30,14 @@
 
 package net.spals.midas;
 
+import net.spals.midas.differ.Differ;
 import net.spals.midas.differ.Differs;
+import net.spals.midas.io.FileUtil;
 import net.spals.midas.io.GoldPath;
 import net.spals.midas.io.GoldPaths;
 import net.spals.midas.serializer.ReflectionSerializer;
-import net.spals.midas.serializer.Serializers;
-import net.spals.midas.differ.Differ;
-import net.spals.midas.io.FileUtil;
 import net.spals.midas.serializer.Serializer;
+import net.spals.midas.serializer.Serializers;
 import net.spals.midas.util.VisibleForTesting;
 
 import java.nio.file.Path;
@@ -63,10 +63,10 @@ public class GoldFile<T> {
     private final FileUtil files;
 
     private GoldFile(final Builder<T> builder) {
-        this.goldPath = builder.path;
-        this.serializer = builder.serializer;
-        this.files = builder.files;
-        this.differ = builder.differ;
+        goldPath = builder.path;
+        serializer = builder.serializer;
+        files = builder.files;
+        differ = builder.differ;
     }
 
     public static <T> GoldFile.Builder<T> builder() {
@@ -121,10 +121,10 @@ public class GoldFile<T> {
         private Differ differ;
 
         private Builder() {
-            this.path = GoldPaths.simple();
-            this.serializer = Serializers.of();
-            this.files = new FileUtil();
-            this.differ = Differs.strings();
+            path = GoldPaths.simple();
+            serializer = Serializers.of();
+            files = new FileUtil();
+            differ = Differs.strings();
         }
 
         @VisibleForTesting
