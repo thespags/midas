@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -38,6 +38,10 @@ package net.spals.midas.serializer;
  */
 class ToStringSerializer<T> implements Serializer<T> {
 
+    /**
+     * @param input the object to be serialized using its {@link Object#toString()}
+     * @return the bytes of the call to {@link Object#toString()}
+     */
     @Override
     public byte[] serialize(final T input) {
         return input == null

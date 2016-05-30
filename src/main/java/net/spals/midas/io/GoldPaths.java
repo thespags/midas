@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -43,6 +43,9 @@ import java.nio.file.Paths;
  */
 public final class GoldPaths {
 
+    /**
+     * Using standard maven test of folders into a resource directory. Perhaps we should have a test/non test one?
+     */
     public static final Path MAVEN = Paths.get("src", "test", "resources");
 
     private GoldPaths() {
@@ -50,6 +53,10 @@ public final class GoldPaths {
 
     /**
      * Locates the path into parent/full/class/name/file
+     *
+     * @param parent the parent path
+     * @param clazz  the fully qualified path each part as a subfolder
+     * @return a path into parent/full/class/name/file
      */
     public static GoldPath fullClass(final Path parent, final Class<?> clazz) {
         return new ParentPath(parent.resolve(clazz.getName().replace(".", File.separator)));
@@ -57,6 +64,10 @@ public final class GoldPaths {
 
     /**
      * Locates the path into parent/classname/file
+     *
+     * @param parent the parent path
+     * @param clazz  the simple class name as a subfolder
+     * @return a path into parent/classname/file
      */
     public static GoldPath simpleClass(final Path parent, final Class<?> clazz) {
         return new ParentPath(parent.resolve(clazz.getSimpleName()));
@@ -64,13 +75,18 @@ public final class GoldPaths {
 
     /**
      * Locates the path into parent/file
+     *
+     * @param parent the parent path
+     * @return a path into parent/file
      */
     public static GoldPath parent(final Path parent) {
         return new ParentPath(parent);
     }
 
     /**
-     * Locates the path into file
+     * Locates the path into a file
+     *
+     * @return simply writes to the file with no extra folders
      */
     public static GoldPath simple() {
         return new SimplePath();

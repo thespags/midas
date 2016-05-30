@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -52,6 +52,10 @@ class IterableSerializer implements Serializer<Iterable> {
         this.serializers = serializers;
     }
 
+    /**
+     * @param iterable the iterable to be serialized
+     * @return the bytes of the serialized iterable
+     */
     @SuppressWarnings("unchecked")
     @Override
     public byte[] serialize(final Iterable iterable) {

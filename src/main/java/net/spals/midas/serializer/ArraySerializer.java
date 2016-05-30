@@ -47,6 +47,10 @@ class ArraySerializer<T> implements Serializer<T[]> {
         serializer = new IterableSerializer(serializers);
     }
 
+    /**
+     * @param array the array to be serialized
+     * @return the bytes of the serialized array
+     */
     @Override
     public byte[] serialize(final T[] array) {
         return serializer.serialize(Arrays.asList(array));

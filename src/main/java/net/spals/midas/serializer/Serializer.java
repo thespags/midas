@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -36,5 +36,10 @@ package net.spals.midas.serializer;
  * @author spags
  */
 public interface Serializer<T> {
+
+    /**
+     * @param input the object to be serialized
+     * @return the bytes of the serialized object
+     */
     byte[] serialize(T input);
 }

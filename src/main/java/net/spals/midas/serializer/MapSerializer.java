@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -48,6 +48,10 @@ class MapSerializer implements Serializer<Map> {
         this.serializers = serializers;
     }
 
+    /**
+     * @param map the map to be serialized
+     * @return the bytes of the serialized map
+     */
     @SuppressWarnings("unchecked")
     @Override
     public byte[] serialize(final Map map) {

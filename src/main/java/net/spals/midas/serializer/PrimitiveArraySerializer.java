@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -47,6 +47,10 @@ class PrimitiveArraySerializer implements Serializer<Object> {
         this.serializers = serializers;
     }
 
+    /**
+     * @param value the primitive array to be serialized
+     * @return the bytes of the serialized primitive array
+     */
     @SuppressWarnings("unchecked")
     @Override
     public byte[] serialize(final Object value) {
