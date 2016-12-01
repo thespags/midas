@@ -42,7 +42,7 @@ class PrimitiveArraySerializer implements Serializer<Object> {
 
     private final SerializerMap serializers;
 
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
+    PrimitiveArraySerializer(final SerializerMap serializers) {
         Objects.requireNonNull(serializers, "bad serializer map");
         this.serializers = serializers;
     }
@@ -61,9 +61,9 @@ class PrimitiveArraySerializer implements Serializer<Object> {
                 builder.append(", ");
             }
             final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
+            builder.append(Strings.get().decode(serializers.getUnsafe(o.getClass()).serialize(o)));
         }
         builder.append("]");
-        return Strings.encode(builder.toString());
+        return Strings.get().encode(builder.toString());
     }
 }

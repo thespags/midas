@@ -45,7 +45,7 @@ class ToStringSerializer<T> implements Serializer<T> {
     @Override
     public byte[] serialize(final T input) {
         return input == null
-            ? Strings.encode(Strings.NULL)
-            : Strings.encode(input.toString());
+            ? Strings.get().encode(Strings.NULL)
+            : Strings.get().encode(input.toString());
     }
 }

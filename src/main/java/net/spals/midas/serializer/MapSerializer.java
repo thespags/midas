@@ -44,7 +44,7 @@ class MapSerializer implements Serializer<Map> {
 
     private final SerializerMap serializers;
 
-    public MapSerializer(final SerializerMap serializers) {
+    MapSerializer(final SerializerMap serializers) {
         this.serializers = serializers;
     }
 
@@ -55,13 +55,13 @@ class MapSerializer implements Serializer<Map> {
     @SuppressWarnings("unchecked")
     @Override
     public byte[] serialize(final Map map) {
-        return Strings.encode(
+        return Strings.get().encode(
             StreamSupport.stream(((Map<?, ?>) map).entrySet().spliterator(), false)
                 .map(
                     entry ->
-                        Strings.decode(serializers.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey()))
+                        Strings.get().decode(serializers.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey()))
                             + " -> "
-                            + Strings.decode(serializers.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue()))
+                            + Strings.get().decode(serializers.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue()))
                 )
                 .collect(Collectors.joining(", ", "(", ")"))
         );

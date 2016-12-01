@@ -96,7 +96,7 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
                         final Class clazz = field.getType();
 
                         //noinspection unchecked
-                        builder.append(Strings.decode(getSerializer(clazz).serialize(fieldValue)));
+                        builder.append(Strings.get().decode(getSerializer(clazz).serialize(fieldValue)));
                     } else {
                         // its null so emit this placeholder
                         builder.append(Strings.NULL);
@@ -111,10 +111,10 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
         if (filterFields && !filteredFields.isEmpty()) {
             throw new IllegalStateException("unmatched fields: " + filteredFields);
         }
-        return Strings.encode(builder.toString());
+        return Strings.get().encode(builder.toString());
     }
 
-    private Serializer getSerializer(final Class clazz) {
+    private Serializer getSerializer(final Class<?> clazz) {
         final Serializer<?> serializer = serializers.get(clazz);
         if (serializer == null) {
             return Objects.requireNonNull(defaultSerializer, "missing serializer: " + clazz);

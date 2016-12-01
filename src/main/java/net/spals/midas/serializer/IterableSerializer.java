@@ -38,9 +38,11 @@ import java.util.stream.StreamSupport;
 
 /**
  * For a given {@link Iterable}&lt;T&gt;, this will use the {@link Serializer} provided for T to serialize.
- * <br>Sets will be marked with {, }
- * <br>Lists will be marked with [, ]
- * <br>Any other iterable will be marked with (, )
+ * <pre>
+ * Sets will be marked with {, }
+ * Lists will be marked with [, ]
+ * Any other iterable will be marked with (, )
+ * </pre>
  *
  * @author spags
  */
@@ -48,7 +50,7 @@ class IterableSerializer implements Serializer<Iterable> {
 
     private final SerializerMap serializers;
 
-    public IterableSerializer(final SerializerMap serializers) {
+    IterableSerializer(final SerializerMap serializers) {
         this.serializers = serializers;
     }
 
@@ -67,9 +69,9 @@ class IterableSerializer implements Serializer<Iterable> {
         } else {
             joiner = Collectors.joining(", ", "(", ")");
         }
-        return Strings.encode(
+        return Strings.get().encode(
             StreamSupport.stream(((Iterable<?>) iterable).spliterator(), false)
-                .map(v -> Strings.decode(serializers.getUnsafe(v.getClass()).serialize(v)))
+                .map(v -> Strings.get().decode(serializers.getUnsafe(v.getClass()).serialize(v)))
                 .collect(joiner)
         );
     }

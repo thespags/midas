@@ -30,7 +30,7 @@
 
 package net.spals.midas.serializer;
 
-import net.spals.midas.util.Preconditions;
+import com.google.common.base.Preconditions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

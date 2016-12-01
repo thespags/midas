@@ -127,7 +127,7 @@ public class ReflectionSerializerTest {
         final byte[] actual = ReflectionSerializer.builder()
             .register(
                 Foo.class,
-                input -> Strings.encode("Foo Class serializer")
+                input -> Strings.get().encode("Foo Class serializer")
             )
             .build()
             .serialize(new Default());
