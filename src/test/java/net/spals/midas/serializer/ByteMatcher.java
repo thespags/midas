@@ -54,8 +54,8 @@ public class ByteMatcher extends TypeSafeDiagnosingMatcher<byte[]> {
 
     @Override
     protected boolean matchesSafely(final byte[] bytes, final Description description) {
-        description.appendText(Strings.get().decode(bytes));
-        return Arrays.equals(bytes, Strings.get().encode(expected));
+        description.appendText(StringEncoding.get().decode(bytes));
+        return Arrays.equals(bytes, StringEncoding.get().encode(expected));
     }
 
     @Override

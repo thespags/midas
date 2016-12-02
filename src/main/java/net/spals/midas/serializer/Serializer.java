@@ -35,11 +35,23 @@ package net.spals.midas.serializer;
  *
  * @author spags
  */
-public interface Serializer<T> {
+@FunctionalInterface
+public interface Serializer {
+
+    /**
+     * Returns the gold file extension associated
+     * with this {@link Serializer}.
+     *
+     * @return an extension attached to a gold
+     * file containing contents from this {@link Serializer}.
+     */
+    default String fileExtension() {
+        return "txt";
+    }
 
     /**
      * @param input the object to be serialized
      * @return the bytes of the serialized object
      */
-    byte[] serialize(T input);
+    byte[] serialize(Object input);
 }

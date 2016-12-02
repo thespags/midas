@@ -46,36 +46,36 @@ import java.util.Objects;
  *
  * @author spags
  */
-class SerializerMap {
+class SerializerRegistry {
 
-    private final Map<Class<?>, Serializer<?>> serializers;
+    private final Map<Class<?>, Serializer> serializers;
     private final PrimitiveArraySerializer arraySerializer;
 
-    private SerializerMap() {
+    private SerializerRegistry() {
         serializers = new LinkedHashMap<>();
         arraySerializer = new PrimitiveArraySerializer(this);
     }
 
-    static SerializerMap make() {
-        return new SerializerMap();
+    static SerializerRegistry make() {
+        return new SerializerRegistry();
     }
 
-    <T> void put(final Class<T> clazz, final Serializer<T> serializer) {
+    <T> void put(final Class<T> clazz, final Serializer serializer) {
         Objects.requireNonNull(clazz, "null class provided");
         Objects.requireNonNull(serializer, "null serializer provided");
         Preconditions.checkArgument(!serializers.containsKey(clazz), "duplicate class: " + clazz);
         serializers.put(clazz, serializer);
     }
 
-    private <T> void putIfMissing(final Class<T> clazz, final Serializer<T> serializer) {
+    private <T> void putIfMissing(final Class<T> clazz, final Serializer serializer) {
         Objects.requireNonNull(clazz, "null class provided");
         Objects.requireNonNull(serializer, "null serializer provided");
         serializers.computeIfAbsent(clazz, c -> serializer);
     }
 
     @SuppressWarnings("unchecked")
-    <T> Serializer<T> get(final Class<T> clazz) {
-        return (Serializer<T>) getUnsafe(clazz);
+    <T> Serializer get(final Class<T> clazz) {
+        return getUnsafe(clazz);
     }
 
     Serializer getUnsafe(final Class<?> clazz) {
@@ -86,7 +86,7 @@ class SerializerMap {
             return arraySerializer;
         }
         // No exact class, try to find an assignable one.
-        for (final Map.Entry<Class<?>, Serializer<?>> entry : serializers.entrySet()) {
+        for (final Map.Entry<Class<?>, Serializer> entry : serializers.entrySet()) {
             if (entry.getKey().isAssignableFrom(clazz)) {
                 return entry.getValue();
             }
@@ -97,32 +97,32 @@ class SerializerMap {
     /**
      * Adds primitive serializer, plus String, Map, and Iterable.
      */
-    SerializerMap putJava() {
-        putIfMissing(boolean.class, Serializers.of());
-        putIfMissing(Boolean.class, Serializers.of());
+    SerializerRegistry putJava() {
+        putIfMissing(boolean.class, Serializers.newDefault());
+        putIfMissing(Boolean.class, Serializers.newDefault());
 
-        putIfMissing(short.class, Serializers.of());
-        putIfMissing(Short.class, Serializers.of());
+        putIfMissing(short.class, Serializers.newDefault());
+        putIfMissing(Short.class, Serializers.newDefault());
 
-        putIfMissing(int.class, Serializers.of());
-        putIfMissing(Integer.class, Serializers.of());
+        putIfMissing(int.class, Serializers.newDefault());
+        putIfMissing(Integer.class, Serializers.newDefault());
 
-        putIfMissing(long.class, Serializers.of());
-        putIfMissing(Long.class, Serializers.of());
+        putIfMissing(long.class, Serializers.newDefault());
+        putIfMissing(Long.class, Serializers.newDefault());
 
-        putIfMissing(double.class, Serializers.of());
-        putIfMissing(Double.class, Serializers.of());
+        putIfMissing(double.class, Serializers.newDefault());
+        putIfMissing(Double.class, Serializers.newDefault());
 
-        putIfMissing(float.class, Serializers.of());
-        putIfMissing(Float.class, Serializers.of());
+        putIfMissing(float.class, Serializers.newDefault());
+        putIfMissing(Float.class, Serializers.newDefault());
 
-        putIfMissing(char.class, Serializers.of());
-        putIfMissing(Character.class, Serializers.of());
+        putIfMissing(char.class, Serializers.newDefault());
+        putIfMissing(Character.class, Serializers.newDefault());
 
-        putIfMissing(byte.class, Serializers.of());
-        putIfMissing(Byte.class, Serializers.of());
+        putIfMissing(byte.class, Serializers.newDefault());
+        putIfMissing(Byte.class, Serializers.newDefault());
 
-        putIfMissing(String.class, Serializers.of());
+        putIfMissing(String.class, Serializers.newDefault());
 
         putIfMissing(Map.class, new MapSerializer(this));
         putIfMissing(Iterable.class, new IterableSerializer(this));

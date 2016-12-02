@@ -30,6 +30,11 @@
 
 package net.spals.midas.serializer;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 /**
  * Provides a factory for standard serializers.
  *
@@ -37,17 +42,25 @@ package net.spals.midas.serializer;
  */
 public final class Serializers {
 
-    private static final Serializer<Object> OBJECT = new ToStringSerializer<>();
+    private Serializers() {  }
 
-    private Serializers() {
+    public static Serializer newDefault() {
+        return new DefaultSerializer();
     }
 
-    /**
-     * @param <T> the class of the {@link ToStringSerializer} to be to typed
-     * @return a {@link ToStringSerializer} strongly typed as {@link T}
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> Serializer<T> of() {
-        return (Serializer<T>) OBJECT;
+    public static Serializer newJackson(final String fileExtension, final ObjectMapper objectMapper) {
+        return new JacksonSerializer(fileExtension, objectMapper);
+    }
+
+    public static Serializer newJson() {
+        return new JacksonSerializer("json", new ObjectMapper(new JsonFactory()));
+    }
+
+    public static Serializer newXml() {
+        return new JacksonSerializer("xml", new ObjectMapper(new XmlFactory()));
+    }
+
+    public static Serializer newYaml() {
+        return new JacksonSerializer("yml", new ObjectMapper(new YAMLFactory()));
     }
 }

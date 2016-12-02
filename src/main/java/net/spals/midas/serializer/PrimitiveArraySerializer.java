@@ -38,13 +38,18 @@ import java.util.Objects;
  *
  * @author spags
  */
-class PrimitiveArraySerializer implements Serializer<Object> {
+class PrimitiveArraySerializer implements Serializer {
 
-    private final SerializerMap serializers;
+    private final SerializerRegistry registry;
 
-    PrimitiveArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializers = serializers;
+    PrimitiveArraySerializer(final SerializerRegistry registry) {
+        Objects.requireNonNull(registry, "bad serializer map");
+        this.registry = registry;
+    }
+
+    @Override
+    public String fileExtension() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -61,9 +66,9 @@ class PrimitiveArraySerializer implements Serializer<Object> {
                 builder.append(", ");
             }
             final Object o = Array.get(value, i);
-            builder.append(Strings.get().decode(serializers.getUnsafe(o.getClass()).serialize(o)));
+            builder.append(StringEncoding.get().decode(registry.getUnsafe(o.getClass()).serialize(o)));
         }
         builder.append("]");
-        return Strings.get().encode(builder.toString());
+        return StringEncoding.get().encode(builder.toString());
     }
 }

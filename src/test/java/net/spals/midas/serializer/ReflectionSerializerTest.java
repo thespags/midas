@@ -108,7 +108,7 @@ public class ReflectionSerializerTest {
 
     @Test
     public void testRegisterBadField() {
-        final Serializer<Foo> serializer = ReflectionSerializer.builder()
+        final Serializer serializer = ReflectionSerializer.builder()
             .registerFields("nonExistentField")
             .registerJava()
             .build();
@@ -127,7 +127,7 @@ public class ReflectionSerializerTest {
         final byte[] actual = ReflectionSerializer.builder()
             .register(
                 Foo.class,
-                input -> Strings.get().encode("Foo Class serializer")
+                input -> StringEncoding.get().encode("Foo Class serializer")
             )
             .build()
             .serialize(new Default());
@@ -137,7 +137,7 @@ public class ReflectionSerializerTest {
     @Test
     public void testDefaultSerializer() {
         final byte[] actual = ReflectionSerializer.builder()
-            .registerDefault(Serializers.of())
+            .registerDefault(Serializers.newDefault())
             .build()
             .serialize(new Default());
         assertThat(actual, bytes("foo = Foo\n"));
@@ -146,7 +146,7 @@ public class ReflectionSerializerTest {
     @Test
     public void testWriteNull() {
         final byte[] actual = ReflectionSerializer.builder()
-            .registerDefault(Serializers.of())
+            .registerDefault(Serializers.newDefault())
             .writeNull()
             .build()
             .serialize(new Default());
@@ -158,7 +158,7 @@ public class ReflectionSerializerTest {
 
     @Test
     public void testNoDefaultSerializer() {
-        final Serializer<Default> serializer = ReflectionSerializer.builder()
+        final Serializer serializer = ReflectionSerializer.builder()
             .build();
         catchException(() -> serializer.serialize(new Default()));
         assertThat(

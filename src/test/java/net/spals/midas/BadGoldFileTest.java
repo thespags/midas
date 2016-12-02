@@ -62,7 +62,7 @@ public class BadGoldFileTest {
     @Mock
     private FileUtil files;
     private Path methodPath;
-    private GoldFile<String> gold;
+    private GoldFile gold;
 
     @BeforeMethod
     public void setUp(final Method method) {

@@ -40,46 +40,49 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 /**
+ * Unit tests for {@link StringEncoding}.
+ *
  * @author spags
+ * @author tkral
  */
-public class StringsTest {
+public class StringEncodingTest {
 
     private static final String FOO = "foo";
     private static final byte[] BYTES = FOO.getBytes();
-    private Strings strings;
+    private StringEncoding stringEncoding;
     private FakeTicker ticker;
 
     @BeforeMethod
     public void setUp() {
         ticker = new FakeTicker();
-        strings = new Strings(ticker);
+        stringEncoding = new StringEncoding(ticker);
     }
 
     @Test
-    public void ass() throws Exception {
-        strings.encode(FOO);
+    public void testCacheCleanUp() throws Exception {
+        stringEncoding.encode(FOO);
         // expire the cache information and run clean up
         ticker.advance(6, TimeUnit.SECONDS);
-        strings.getBytesToString().cleanUp();
-        strings.getStringToBytes().cleanUp();
+        stringEncoding.getBytesToStringCache().cleanUp();
+        stringEncoding.getStringToBytesCache().cleanUp();
 
-        assertThat(strings.getBytesToString().asMap(), anEmptyMap());
-        assertThat(strings.getStringToBytes().asMap(), anEmptyMap());
+        assertThat(stringEncoding.getBytesToStringCache().asMap(), anEmptyMap());
+        assertThat(stringEncoding.getStringToBytesCache().asMap(), anEmptyMap());
     }
 
     @Test
     public void testDecode() throws Exception {
-        final String decode = strings.decode(BYTES);
+        final String decode = stringEncoding.decode(BYTES);
         assertThat(decode, is(FOO));
-        assertThat(strings.getBytesToString().asMap(), hasEntry(BYTES, FOO));
-        assertThat(strings.getStringToBytes().asMap(), hasEntry(FOO, BYTES));
+        assertThat(stringEncoding.getBytesToStringCache().asMap(), hasEntry(BYTES, FOO));
+        assertThat(stringEncoding.getStringToBytesCache().asMap(), hasEntry(FOO, BYTES));
     }
 
     @Test
     public void testEncode() throws Exception {
-        final byte[] encode = strings.encode(FOO);
+        final byte[] encode = stringEncoding.encode(FOO);
         assertThat(encode, ByteMatcher.bytes(FOO));
-        assertThat(strings.getBytesToString().asMap(), hasEntry(BYTES, FOO));
-        assertThat(strings.getStringToBytes().asMap(), hasEntry(FOO, BYTES));
+        assertThat(stringEncoding.getBytesToStringCache().asMap(), hasEntry(BYTES, FOO));
+        assertThat(stringEncoding.getStringToBytesCache().asMap(), hasEntry(FOO, BYTES));
     }
 }

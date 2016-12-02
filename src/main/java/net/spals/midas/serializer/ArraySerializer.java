@@ -38,13 +38,18 @@ import java.util.Objects;
  *
  * @author spags
  */
-class ArraySerializer<T> implements Serializer<T[]> {
+class ArraySerializer implements Serializer {
 
     private final IterableSerializer serializer;
 
-    ArraySerializer(final SerializerMap serializers) {
-        Objects.requireNonNull(serializers, "bad serializer map");
-        serializer = new IterableSerializer(serializers);
+    ArraySerializer(final SerializerRegistry registry) {
+        Objects.requireNonNull(registry, "bad serializer registry");
+        serializer = new IterableSerializer(registry);
+    }
+
+    @Override
+    public String fileExtension() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -52,7 +57,7 @@ class ArraySerializer<T> implements Serializer<T[]> {
      * @return the bytes of the serialized array
      */
     @Override
-    public byte[] serialize(final T[] array) {
+    public byte[] serialize(final Object array) {
         return serializer.serialize(Arrays.asList(array));
     }
 }

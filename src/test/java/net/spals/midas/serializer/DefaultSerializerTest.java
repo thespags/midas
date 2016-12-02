@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2015, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -30,22 +30,29 @@
 
 package net.spals.midas.serializer;
 
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import static net.spals.midas.serializer.ByteMatcher.bytes;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 /**
- * Calls {@link #toString()} for a given type T.
- * If the input is null then will return a string of {@code "<null>"}
+ * Unit tests for {@link DefaultSerializer}.
  *
  * @author spags
  */
-class ToStringSerializer<T> implements Serializer<T> {
+public class DefaultSerializerTest {
 
-    /**
-     * @param input the object to be serialized using its {@link Object#toString()}
-     * @return the bytes of the call to {@link Object#toString()}
-     */
-    @Override
-    public byte[] serialize(final T input) {
-        return input == null
-            ? Strings.get().encode(Strings.NULL)
-            : Strings.get().encode(input.toString());
+    @DataProvider
+    Object[][] serializeProvider() {
+        return new Object[][] {
+            {"foo", "foo"},
+            {null, "<null>"},
+        };
+    }
+
+    @Test(dataProvider = "serializeProvider")
+    public void testSerialize(final Object input, final String expectedOutput) {
+        assertThat(Serializers.newDefault().serialize(input), bytes(expectedOutput));
     }
 }

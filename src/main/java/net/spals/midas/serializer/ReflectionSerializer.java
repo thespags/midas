@@ -43,7 +43,7 @@ import java.util.Set;
  * and should only be used for a top level call to serialize, ie don't register a serializer of this type for a class.
  * <pre>
  * You can register default java serializer {@link Builder#registerJava()}
- * You can register a specific class type serializer {@link Builder#register(Class, Serializer)}
+ * You can register a specific class type serializer {@link Builder#register(Class, TypedSerializer)}
  * You can register a default serializer if no specific one is found {@link Builder#registerDefault(Serializer)}
  * You can specify which field(s) to serialize {@link Builder#registerField(String)} or {@link Builder#registerFields(String...)}
  * You can specify null fields to be written as {@code "<null>"} {@link Builder#writeNull}
@@ -51,16 +51,16 @@ import java.util.Set;
  *
  * @author spags
  */
-public final class ReflectionSerializer<T> implements Serializer<T> {
+public final class ReflectionSerializer implements Serializer {
 
-    private final SerializerMap serializers;
+    private final SerializerRegistry registry;
     private final boolean writeNull;
     private final Set<String> filteredFields;
     private final boolean filterFields;
-    private final Serializer<Object> defaultSerializer;
+    private final Serializer defaultSerializer;
 
     private ReflectionSerializer(final Builder builder) {
-        serializers = builder.serializers;
+        registry = builder.registry;
         writeNull = builder.writeNull;
         defaultSerializer = builder.defaultSerializer;
         filteredFields = builder.filteredFields;
@@ -76,7 +76,7 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
      * @return the bytes of the serialized input
      */
     @Override
-    public byte[] serialize(final T input) {
+    public byte[] serialize(final Object input) {
         final Field[] fields = input.getClass().getDeclaredFields();
         final StringBuilder builder = new StringBuilder();
         for (final Field field : fields) {
@@ -96,10 +96,10 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
                         final Class clazz = field.getType();
 
                         //noinspection unchecked
-                        builder.append(Strings.get().decode(getSerializer(clazz).serialize(fieldValue)));
+                        builder.append(StringEncoding.get().decode(getSerializer(clazz).serialize(fieldValue)));
                     } else {
                         // its null so emit this placeholder
-                        builder.append(Strings.NULL);
+                        builder.append(StringEncoding.NULL);
                     }
                     builder.append("\n");
                 }
@@ -111,11 +111,11 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
         if (filterFields && !filteredFields.isEmpty()) {
             throw new IllegalStateException("unmatched fields: " + filteredFields);
         }
-        return Strings.get().encode(builder.toString());
+        return StringEncoding.get().encode(builder.toString());
     }
 
     private Serializer getSerializer(final Class<?> clazz) {
-        final Serializer<?> serializer = serializers.get(clazz);
+        final Serializer serializer = registry.get(clazz);
         if (serializer == null) {
             return Objects.requireNonNull(defaultSerializer, "missing serializer: " + clazz);
         }
@@ -125,12 +125,12 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
     public static final class Builder {
 
         private final Set<String> filteredFields;
-        private final SerializerMap serializers;
+        private final SerializerRegistry registry;
         private boolean writeNull;
-        private Serializer<Object> defaultSerializer;
+        private Serializer defaultSerializer;
 
         private Builder() {
-            serializers = SerializerMap.make();
+            registry = SerializerRegistry.make();
             filteredFields = new HashSet<>();
         }
 
@@ -174,8 +174,8 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
          * @param serializer serialize that is registered
          * @return the current builder
          */
-        public <T> Builder register(final Class<T> clazz, final Serializer<T> serializer) {
-            serializers.put(clazz, serializer);
+        public <T> Builder register(final Class<T> clazz, final TypedSerializer<T> serializer) {
+            registry.put(clazz, serializer);
             return this;
         }
 
@@ -185,7 +185,7 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
          * @param serializer serialize that is registered
          * @return the current builder
          */
-        public Builder registerDefault(final Serializer<Object> serializer) {
+        public Builder registerDefault(final Serializer serializer) {
             defaultSerializer = serializer;
             return this;
         }
@@ -197,16 +197,15 @@ public final class ReflectionSerializer<T> implements Serializer<T> {
          * @return the current builder
          */
         public Builder registerJava() {
-            serializers.putJava();
+            registry.putJava();
             return this;
         }
 
         /**
-         * @param <T> the type of the serializer
          * @return an instance of {@link ReflectionSerializer} from the builder
          */
-        public <T> ReflectionSerializer<T> build() {
-            return new ReflectionSerializer<>(this);
+        public ReflectionSerializer build() {
+            return new ReflectionSerializer(this);
         }
     }
 }

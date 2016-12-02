@@ -30,69 +30,102 @@
 
 package net.spals.midas.serializer;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Ticker;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Attempts some basic interning for encoding, decoding strings as a two {@link Cache}'s that expire after a few seconds.
- * The performance is probably irrelevant for the use case but it was a thought expirament to use guava's {@link Cache}.
+ * Common utilities for encoding and decoding {@link String}s.
+ *
+ * This includes a small {@link Cache} to speed up the process for
+ * commonly encoded / decoded values.
  *
  * @author spags
+ * @author tkral
  */
-final class Strings {
+final class StringEncoding {
 
     static final String NULL = "<null>";
-    private static final Strings INSTANCE = new Strings(Ticker.systemTicker());
-    private final Cache<String, byte[]> stringToBytes;
-    private final Cache<byte[], String> bytesToString;
 
-    Strings(final Ticker ticker) {
-        stringToBytes = CacheBuilder.newBuilder()
+    private static final StringEncoding INSTANCE = new StringEncoding(Ticker.systemTicker());
+
+    private final LoadingCache<String, byte[]> stringToBytesCache;
+    private final LoadingCache<byte[], String> bytesToStringCache;
+
+    @VisibleForTesting
+    StringEncoding(final Ticker ticker) {
+        stringToBytesCache = CacheBuilder.newBuilder()
             .expireAfterAccess(5, TimeUnit.SECONDS)
             .ticker(ticker)
-            .build();
-        bytesToString = CacheBuilder.newBuilder()
+            .build(new StringToBytesCacheLoader());
+        bytesToStringCache = CacheBuilder.newBuilder()
             .expireAfterAccess(5, TimeUnit.SECONDS)
             .ticker(ticker)
-            .build();
+            .build(new BytesToStringCacheLoader());
     }
 
-    static Strings get() {
+    static StringEncoding get() {
         return INSTANCE;
     }
 
-    synchronized String decode(final byte[] bytes) {
-        final String value;
+    String decode(final byte[] bytes) {
         try {
-            value = bytesToString.get(bytes, () -> new String(bytes, StandardCharsets.UTF_8));
-            stringToBytes.put(value, bytes);
-            return value;
+            return bytesToStringCache.get(bytes);
         } catch (final ExecutionException x) {
             throw new RuntimeException(x);
         }
     }
 
-    synchronized byte[] encode(final String string) {
-        final byte[] value;
+    byte[] encode(final String string) {
         try {
-            value = stringToBytes.get(string, string::getBytes);
-            bytesToString.put(value, string);
-            return value;
+            return stringToBytesCache.get(string);
         } catch (final ExecutionException x) {
             throw new RuntimeException(x);
         }
     }
 
-    Cache<String, byte[]> getStringToBytes() {
-        return stringToBytes;
+    @VisibleForTesting
+    Cache<String, byte[]> getStringToBytesCache() {
+        return stringToBytesCache;
     }
 
-    Cache<byte[], String> getBytesToString() {
-        return bytesToString;
+    @VisibleForTesting
+    Cache<byte[], String> getBytesToStringCache() {
+        return bytesToStringCache;
+    }
+
+    /**
+     * A {@link CacheLoader} to convert a byte array
+     * to a {@link String}.
+     *
+     * @author tkral
+     */
+    private final static class BytesToStringCacheLoader extends CacheLoader<byte[], String> {
+
+        @Override
+        public String load(final byte[] key) throws Exception {
+            return new String(key, StandardCharsets.UTF_8);
+        }
+    }
+
+    /**
+     * A {@link CacheLoader} to convert a {@link String}
+     * to a byte array.
+     *
+     * @author tkral
+     */
+    private final static class StringToBytesCacheLoader extends CacheLoader<String, byte[]> {
+
+        @Override
+        public byte[] load(final String key) throws Exception {
+            return key.getBytes();
+        }
     }
 }

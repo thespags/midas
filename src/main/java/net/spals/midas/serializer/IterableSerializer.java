@@ -46,12 +46,17 @@ import java.util.stream.StreamSupport;
  *
  * @author spags
  */
-class IterableSerializer implements Serializer<Iterable> {
+class IterableSerializer implements Serializer {
 
-    private final SerializerMap serializers;
+    private final SerializerRegistry registry;
 
-    IterableSerializer(final SerializerMap serializers) {
-        this.serializers = serializers;
+    IterableSerializer(final SerializerRegistry registry) {
+        this.registry = registry;
+    }
+
+    @Override
+    public String fileExtension() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -60,7 +65,7 @@ class IterableSerializer implements Serializer<Iterable> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public byte[] serialize(final Iterable iterable) {
+    public byte[] serialize(final Object iterable) {
         final Collector<CharSequence, ?, String> joiner;
         if (iterable instanceof Set) {
             joiner = Collectors.joining(", ", "{", "}");
@@ -69,9 +74,9 @@ class IterableSerializer implements Serializer<Iterable> {
         } else {
             joiner = Collectors.joining(", ", "(", ")");
         }
-        return Strings.get().encode(
+        return StringEncoding.get().encode(
             StreamSupport.stream(((Iterable<?>) iterable).spliterator(), false)
-                .map(v -> Strings.get().decode(serializers.getUnsafe(v.getClass()).serialize(v)))
+                .map(v -> StringEncoding.get().decode(registry.getUnsafe(v.getClass()).serialize(v)))
                 .collect(joiner)
         );
     }

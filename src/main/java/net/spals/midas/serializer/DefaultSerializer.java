@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -30,23 +30,27 @@
 
 package net.spals.midas.serializer;
 
-import org.testng.annotations.Test;
-
-import static net.spals.midas.serializer.ByteMatcher.bytes;
-import static org.hamcrest.MatcherAssert.assertThat;
+import java.util.Optional;
 
 /**
+ * Calls {@link #toString()} for a given type T.
+ * If the input is null then will return a string of {@code "<null>"}
+ *
  * @author spags
+ * @author tkral
  */
-public class ToStringSerializerTest {
+class DefaultSerializer implements Serializer {
 
-    @Test
-    public void testSerialize() {
-        assertThat(Serializers.of().serialize("foo"), bytes("foo"));
-    }
+    DefaultSerializer() {  }
 
-    @Test
-    public void testNullSerialize() {
-        assertThat(Serializers.of().serialize(null), bytes("<null>"));
+    /**
+     * @see Serializer#serialize(Object)
+     */
+    @Override
+    public byte[] serialize(final Object input) {
+
+        return Optional.ofNullable(input)
+                .map(in -> StringEncoding.get().encode(in.toString()))
+                .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
     }
 }

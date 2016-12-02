@@ -42,12 +42,17 @@ import java.util.stream.StreamSupport;
  *
  * @author spags
  */
-class MapSerializer implements Serializer<Map> {
+class MapSerializer implements Serializer {
 
-    private final SerializerMap serializers;
+    private final SerializerRegistry registry;
 
-    MapSerializer(final SerializerMap serializers) {
-        this.serializers = serializers;
+    MapSerializer(final SerializerRegistry registry) {
+        this.registry = registry;
+    }
+
+    @Override
+    public String fileExtension() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -56,14 +61,14 @@ class MapSerializer implements Serializer<Map> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public byte[] serialize(final Map map) {
-        return Strings.get().encode(
+    public byte[] serialize(final Object map) {
+        return StringEncoding.get().encode(
             StreamSupport.stream(((Map<?, ?>) map).entrySet().spliterator(), false)
                 .map(
                     entry ->
-                        Strings.get().decode(serializers.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey()))
+                        StringEncoding.get().decode(registry.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey()))
                             + " -> "
-                            + Strings.get().decode(serializers.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue()))
+                            + StringEncoding.get().decode(registry.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue()))
                 )
                 .collect(Collectors.joining(", ", "(", ")"))
         );

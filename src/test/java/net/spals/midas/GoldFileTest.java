@@ -50,7 +50,7 @@ import static org.hamcrest.Matchers.is;
  */
 public class GoldFileTest {
 
-    private static final GoldFile<Object> SIMPLE_CLASS_GOLD = GoldFile.builder()
+    private static final GoldFile SIMPLE_CLASS_GOLD = GoldFile.builder()
         .withPath(GoldPaths.simpleClass(GoldPaths.MAVEN, GoldFileTest.class))
         .build();
     private Path methodPath;
