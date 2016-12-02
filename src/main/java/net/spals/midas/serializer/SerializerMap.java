@@ -39,8 +39,10 @@ import java.util.Objects;
 /**
  * A mapping of types to their serializer.
  * Provides default behavior for serializes that were specified.
- * <br>1. Arrays, return the array serializer
- * <br>2. If no exact class was found, it will use assignability to determine the next best serializer
+ * <pre>
+ * - Arrays, return the array serializer
+ * - If no exact class was found, it will use assignability to determine the next best serializer
+ * </pre>
  *
  * @author spags
  */

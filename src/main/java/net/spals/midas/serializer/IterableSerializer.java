@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * For a given {@link Iterable}&lt;T&gt;, this will use the {@link Serializer} provided for T to serialize.
+ * For a given {@code Iterable<T>}, this will use the {@link Serializer} provided for T to serialize.
  * <pre>
  * Sets will be marked with {, }
  * Lists will be marked with [, ]
