@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -41,8 +41,8 @@ public final class DefaultGoldOptions implements GoldOptions {
     private boolean checkout;
 
     private DefaultGoldOptions() {
-        this.writable = true;
-        this.checkout = true;
+        writable = true;
+        checkout = true;
     }
 
     public static DefaultGoldOptions create() {
@@ -50,26 +50,34 @@ public final class DefaultGoldOptions implements GoldOptions {
     }
 
     /**
-     * Can we overwrite the current file or do we write a back up?
+     * @return can we overwrite the current file or do we write a back up?
      */
     @Override
     public boolean checkout() {
         return checkout;
     }
 
+    /**
+     * @param checkout if we can overwrite the current file or do we write a back up?
+     * @return the options
+     */
     public GoldOptions setCheckout(final boolean checkout) {
         this.checkout = checkout;
         return this;
     }
 
     /**
-     * Should we actually write a file to the system?
+     * @return should we actually write a file to the system?
      */
     @Override
     public boolean writable() {
         return writable;
     }
 
+    /**
+     * @param writable if we should actually write a file to the system?
+     * @return the options
+     */
     public GoldOptions setWritable(final boolean writable) {
         this.writable = writable;
         return this;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -37,10 +37,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * For a given {@link Iterable}&lt;T&gt;, this will use the {@link Serializer} provided for T to serialize.
- * <br>Sets will be marked with {, }
- * <br>Lists will be marked with [, ]
- * <br>Any other iterable will be marked with (, )
+ * For a given {@code Iterable<T>}, this will use the {@link Serializer} provided for T to serialize.
+ * <pre>
+ * Sets will be marked with {, }
+ * Lists will be marked with [, ]
+ * Any other iterable will be marked with (, )
+ * </pre>
  *
  * @author spags
  */
@@ -48,10 +50,14 @@ class IterableSerializer implements Serializer<Iterable> {
 
     private final SerializerMap serializers;
 
-    public IterableSerializer(final SerializerMap serializers) {
+    IterableSerializer(final SerializerMap serializers) {
         this.serializers = serializers;
     }
 
+    /**
+     * @param iterable the iterable to be serialized
+     * @return the bytes of the serialized iterable
+     */
     @SuppressWarnings("unchecked")
     @Override
     public byte[] serialize(final Iterable iterable) {
@@ -63,9 +69,9 @@ class IterableSerializer implements Serializer<Iterable> {
         } else {
             joiner = Collectors.joining(", ", "(", ")");
         }
-        return Strings.encode(
+        return Strings.get().encode(
             StreamSupport.stream(((Iterable<?>) iterable).spliterator(), false)
-                .map(v -> Strings.decode(serializers.getUnsafe(v.getClass()).serialize(v)))
+                .map(v -> Strings.get().decode(serializers.getUnsafe(v.getClass()).serialize(v)))
                 .collect(joiner)
         );
     }

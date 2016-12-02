@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -42,11 +42,15 @@ class PrimitiveArraySerializer implements Serializer<Object> {
 
     private final SerializerMap serializers;
 
-    public PrimitiveArraySerializer(final SerializerMap serializers) {
+    PrimitiveArraySerializer(final SerializerMap serializers) {
         Objects.requireNonNull(serializers, "bad serializer map");
         this.serializers = serializers;
     }
 
+    /**
+     * @param value the primitive array to be serialized
+     * @return the bytes of the serialized primitive array
+     */
     @SuppressWarnings("unchecked")
     @Override
     public byte[] serialize(final Object value) {
@@ -57,9 +61,9 @@ class PrimitiveArraySerializer implements Serializer<Object> {
                 builder.append(", ");
             }
             final Object o = Array.get(value, i);
-            builder.append(Strings.decode(serializers.getUnsafe(o.getClass()).serialize(o)));
+            builder.append(Strings.get().decode(serializers.getUnsafe(o.getClass()).serialize(o)));
         }
         builder.append("]");
-        return Strings.encode(builder.toString());
+        return Strings.get().encode(builder.toString());
     }
 }

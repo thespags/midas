@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -42,11 +42,15 @@ class ArraySerializer<T> implements Serializer<T[]> {
 
     private final IterableSerializer serializer;
 
-    public ArraySerializer(final SerializerMap serializers) {
+    ArraySerializer(final SerializerMap serializers) {
         Objects.requireNonNull(serializers, "bad serializer map");
-        this.serializer = new IterableSerializer(serializers);
+        serializer = new IterableSerializer(serializers);
     }
 
+    /**
+     * @param array the array to be serialized
+     * @return the bytes of the serialized array
+     */
     @Override
     public byte[] serialize(final T[] array) {
         return serializer.serialize(Arrays.asList(array));

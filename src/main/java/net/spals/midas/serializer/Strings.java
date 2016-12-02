@@ -30,56 +30,69 @@
 
 package net.spals.midas.serializer;
 
-import net.spals.midas.util.VisibleForTesting;
+import com.google.common.base.Ticker;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
-import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Attempts some basic interning for encoding, decoding strings as a bi map.
+ * Attempts some basic interning for encoding, decoding strings as a two {@link Cache}'s that expire after a few seconds.
+ * The performance is probably irrelevant for the use case but it was a thought expirament to use guava's {@link Cache}.
  *
  * @author spags
  */
 final class Strings {
 
     static final String NULL = "<null>";
-    @VisibleForTesting
-    static final Map<String, WeakReference<byte[]>> STRING_TO_BYTES = new WeakHashMap<>();
-    @VisibleForTesting
-    static final Map<byte[], WeakReference<String>> BYTES_TO_STRING = new WeakHashMap<>();
+    private static final Strings INSTANCE = new Strings(Ticker.systemTicker());
+    private final Cache<String, byte[]> stringToBytes;
+    private final Cache<byte[], String> bytesToString;
 
-    private Strings() {
+    Strings(final Ticker ticker) {
+        stringToBytes = CacheBuilder.newBuilder()
+            .expireAfterAccess(5, TimeUnit.SECONDS)
+            .ticker(ticker)
+            .build();
+        bytesToString = CacheBuilder.newBuilder()
+            .expireAfterAccess(5, TimeUnit.SECONDS)
+            .ticker(ticker)
+            .build();
     }
 
-    static synchronized String decode(final byte[] bytes) {
-        final WeakReference<String> reference = BYTES_TO_STRING.get(bytes);
-
-        if (reference != null) {
-            final String value = reference.get();
-            if (value != null) {
-                return value;
-            }
-        }
-        final String value = new String(bytes, StandardCharsets.UTF_8);
-        BYTES_TO_STRING.put(bytes, new WeakReference<>(value));
-        STRING_TO_BYTES.put(value, new WeakReference<>(bytes));
-        return value;
+    static Strings get() {
+        return INSTANCE;
     }
 
-    static synchronized byte[] encode(final String string) {
-        final WeakReference<byte[]> reference = STRING_TO_BYTES.get(string);
-
-        if (reference != null) {
-            final byte[] value = reference.get();
-            if (value != null) {
-                return value;
-            }
+    synchronized String decode(final byte[] bytes) {
+        final String value;
+        try {
+            value = bytesToString.get(bytes, () -> new String(bytes, StandardCharsets.UTF_8));
+            stringToBytes.put(value, bytes);
+            return value;
+        } catch (final ExecutionException x) {
+            throw new RuntimeException(x);
         }
-        final byte[] value = string.getBytes();
-        BYTES_TO_STRING.put(value, new WeakReference<>(string));
-        STRING_TO_BYTES.put(string, new WeakReference<>(value));
-        return value;
+    }
+
+    synchronized byte[] encode(final String string) {
+        final byte[] value;
+        try {
+            value = stringToBytes.get(string, string::getBytes);
+            bytesToString.put(value, string);
+            return value;
+        } catch (final ExecutionException x) {
+            throw new RuntimeException(x);
+        }
+    }
+
+    Cache<String, byte[]> getStringToBytes() {
+        return stringToBytes;
+    }
+
+    Cache<byte[], String> getBytesToString() {
+        return bytesToString;
     }
 }

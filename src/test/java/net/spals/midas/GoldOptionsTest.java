@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -31,9 +31,9 @@
 package net.spals.midas;
 
 
+import net.spals.midas.io.FileUtil;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import net.spals.midas.io.FileUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -41,7 +41,6 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -49,7 +48,7 @@ import static org.mockito.Mockito.*;
  */
 public class GoldOptionsTest {
 
-    public static final byte[] BYTES = "foo".getBytes();
+    private static final byte[] BYTES = "foo".getBytes();
     @Mock
     private FileUtil files;
     private GoldFile<String> gold;
@@ -58,7 +57,7 @@ public class GoldOptionsTest {
     public void setUp(final Method method) {
         MockitoAnnotations.initMocks(this);
 
-        this.gold = GoldFile.<String>builder()
+        gold = GoldFile.<String>builder()
             .withFileUtil(files)
             .build();
     }

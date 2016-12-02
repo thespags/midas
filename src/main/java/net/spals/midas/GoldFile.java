@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -30,15 +30,15 @@
 
 package net.spals.midas;
 
+import com.google.common.annotations.VisibleForTesting;
+import net.spals.midas.differ.Differ;
 import net.spals.midas.differ.Differs;
+import net.spals.midas.io.FileUtil;
 import net.spals.midas.io.GoldPath;
 import net.spals.midas.io.GoldPaths;
 import net.spals.midas.serializer.ReflectionSerializer;
-import net.spals.midas.serializer.Serializers;
-import net.spals.midas.differ.Differ;
-import net.spals.midas.io.FileUtil;
 import net.spals.midas.serializer.Serializer;
-import net.spals.midas.util.VisibleForTesting;
+import net.spals.midas.serializer.Serializers;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -63,18 +63,25 @@ public class GoldFile<T> {
     private final FileUtil files;
 
     private GoldFile(final Builder<T> builder) {
-        this.goldPath = builder.path;
-        this.serializer = builder.serializer;
-        this.files = builder.files;
-        this.differ = builder.differ;
+        goldPath = builder.path;
+        serializer = builder.serializer;
+        files = builder.files;
+        differ = builder.differ;
     }
 
+    /**
+     * @param <T> the type to be run against for the gold file
+     * @return an instance of {@link GoldFile.Builder}
+     */
     public static <T> GoldFile.Builder<T> builder() {
         return new GoldFile.Builder<>();
     }
 
     /**
      * Runs with the default values of {@link DefaultGoldOptions}
+     *
+     * @param object the object to be run against the gold file
+     * @param path   the location of the gold file
      */
     public void run(final T object, final Path path) {
         run(object, path, DefaultGoldOptions.create());
@@ -83,6 +90,10 @@ public class GoldFile<T> {
     /**
      * Allows you to specify the behavior of this run with {@link DefaultGoldOptions} that are independent of this
      * particular gold file suite.
+     *
+     * @param object  the object to be run against the gold file
+     * @param path    the location of the gold file
+     * @param options the run time options of the gold file execution
      */
     public void run(final T object, final Path path, final GoldOptions options) {
         final Path fullPath = goldPath.get(path);
@@ -121,10 +132,10 @@ public class GoldFile<T> {
         private Differ differ;
 
         private Builder() {
-            this.path = GoldPaths.simple();
-            this.serializer = Serializers.of();
-            this.files = new FileUtil();
-            this.differ = Differs.strings();
+            path = GoldPaths.simple();
+            serializer = Serializers.of();
+            files = new FileUtil();
+            differ = Differs.strings();
         }
 
         @VisibleForTesting
@@ -135,6 +146,9 @@ public class GoldFile<T> {
 
         /**
          * The parent path for this set of gold file results, by default this is empty.
+         *
+         * @param path the parent path
+         * @return the current builder
          */
         public Builder<T> withPath(final GoldPath path) {
             this.path = path;
@@ -143,6 +157,8 @@ public class GoldFile<T> {
 
         /**
          * Basic reflection serializer using default built in serializers for java types.
+         *
+         * @return the current builder
          */
         public Builder<T> withReflectionSerializer() {
             return withSerializer(ReflectionSerializer.builder().registerJava().build());
@@ -150,6 +166,9 @@ public class GoldFile<T> {
 
         /**
          * Assign a specific serialize to use, by default it will use a toString.
+         *
+         * @param serializer the mechanism for translating an object
+         * @return the current builder
          */
         public Builder<T> withSerializer(final Serializer<T> serializer) {
             Objects.requireNonNull(serializer, "bad serializer");
@@ -159,6 +178,9 @@ public class GoldFile<T> {
 
         /**
          * Assign a specific differ to use, by default it will use a string differ.
+         *
+         * @param differ the mechanism for diffing an object
+         * @return the current builder
          */
         public Builder<T> withDiffer(final Differ differ) {
             Objects.requireNonNull(differ, "bad differ");
@@ -166,6 +188,9 @@ public class GoldFile<T> {
             return this;
         }
 
+        /**
+         * @return an instance of {@link GoldFile} from the builder
+         */
         public GoldFile<T> build() {
             return new GoldFile<>(this);
         }

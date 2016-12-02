@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -50,14 +50,14 @@ import static org.hamcrest.Matchers.is;
  */
 public class GoldFileTest {
 
-    public static final GoldFile<Object> SIMPLE_CLASS_GOLD = GoldFile.builder()
+    private static final GoldFile<Object> SIMPLE_CLASS_GOLD = GoldFile.builder()
         .withPath(GoldPaths.simpleClass(GoldPaths.MAVEN, GoldFileTest.class))
         .build();
     private Path methodPath;
 
     @BeforeMethod
     public void setUp(final Method method) {
-        this.methodPath = Paths.get(method.getName());
+        methodPath = Paths.get(method.getName());
     }
 
     @Test

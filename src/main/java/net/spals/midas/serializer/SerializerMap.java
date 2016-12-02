@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -30,7 +30,7 @@
 
 package net.spals.midas.serializer;
 
-import net.spals.midas.util.Preconditions;
+import com.google.common.base.Preconditions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,8 +39,10 @@ import java.util.Objects;
 /**
  * A mapping of types to their serializer.
  * Provides default behavior for serializes that were specified.
- * <br>1. Arrays, return the array serializer
- * <br>2. If no exact class was found, it will use assignability to determine the next best serializer
+ * <pre>
+ * - Arrays, return the array serializer
+ * - If no exact class was found, it will use assignability to determine the next best serializer
+ * </pre>
  *
  * @author spags
  */
@@ -50,29 +52,25 @@ class SerializerMap {
     private final PrimitiveArraySerializer arraySerializer;
 
     private SerializerMap() {
-        this.serializers = new LinkedHashMap<>();
-        this.arraySerializer = new PrimitiveArraySerializer(this);
+        serializers = new LinkedHashMap<>();
+        arraySerializer = new PrimitiveArraySerializer(this);
     }
 
-    public static SerializerMap make() {
+    static SerializerMap make() {
         return new SerializerMap();
     }
 
-    <T> SerializerMap put(final Class<T> clazz, final Serializer<T> serializer) {
+    <T> void put(final Class<T> clazz, final Serializer<T> serializer) {
         Objects.requireNonNull(clazz, "null class provided");
         Objects.requireNonNull(serializer, "null serializer provided");
         Preconditions.checkArgument(!serializers.containsKey(clazz), "duplicate class: " + clazz);
         serializers.put(clazz, serializer);
-        return this;
     }
 
-    <T> SerializerMap putIfMissing(final Class<T> clazz, final Serializer<T> serializer) {
+    private <T> void putIfMissing(final Class<T> clazz, final Serializer<T> serializer) {
         Objects.requireNonNull(clazz, "null class provided");
         Objects.requireNonNull(serializer, "null serializer provided");
-        if (!serializers.containsKey(clazz)) {
-            serializers.put(clazz, serializer);
-        }
-        return this;
+        serializers.computeIfAbsent(clazz, c -> serializer);
     }
 
     @SuppressWarnings("unchecked")

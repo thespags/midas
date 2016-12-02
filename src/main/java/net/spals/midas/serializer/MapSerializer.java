@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -35,8 +35,10 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * For a given {@link Map}<K, V>, this will use the {@link Serializer} provided for K, V to serialize.
- * <br>This will be represented as (serialize(K) => serialize(V), ...)
+ * For a given {@code Map<K, V>}, this will use the {@link Serializer} provided for K, V to serialize.
+ * <pre>
+ * This will be represented as (serialize(K) => serialize(V), ...)
+ * </pre>
  *
  * @author spags
  */
@@ -44,20 +46,24 @@ class MapSerializer implements Serializer<Map> {
 
     private final SerializerMap serializers;
 
-    public MapSerializer(final SerializerMap serializers) {
+    MapSerializer(final SerializerMap serializers) {
         this.serializers = serializers;
     }
 
+    /**
+     * @param map the map to be serialized
+     * @return the bytes of the serialized map
+     */
     @SuppressWarnings("unchecked")
     @Override
     public byte[] serialize(final Map map) {
-        return Strings.encode(
+        return Strings.get().encode(
             StreamSupport.stream(((Map<?, ?>) map).entrySet().spliterator(), false)
                 .map(
                     entry ->
-                        Strings.decode(serializers.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey()))
+                        Strings.get().decode(serializers.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey()))
                             + " -> "
-                            + Strings.decode(serializers.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue()))
+                            + Strings.get().decode(serializers.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue()))
                 )
                 .collect(Collectors.joining(", ", "(", ")"))
         );

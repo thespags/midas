@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -42,6 +42,10 @@ public final class Serializers {
     private Serializers() {
     }
 
+    /**
+     * @param <T> the class of the {@link ToStringSerializer} to be to typed
+     * @return a {@link ToStringSerializer} strongly typed as {@link T}
+     */
     @SuppressWarnings("unchecked")
     public static <T> Serializer<T> of() {
         return (Serializer<T>) OBJECT;
