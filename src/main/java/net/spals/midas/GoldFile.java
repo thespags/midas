@@ -139,7 +139,7 @@ public class GoldFile {
 
         @VisibleForTesting
         Builder withFileUtil(final FileUtil files) {
-            this.files = files;
+            this.files = Objects.requireNonNull(files, "bad file util");
             return this;
         }
 
@@ -150,7 +150,7 @@ public class GoldFile {
          * @return the current builder
          */
         public Builder withPath(final GoldPath path) {
-            this.path = path;
+            this.path = Objects.requireNonNull(path, "bad path");
             return this;
         }
 
@@ -170,8 +170,7 @@ public class GoldFile {
          * @return the current builder
          */
         public Builder withSerializer(final Serializer serializer) {
-            Objects.requireNonNull(serializer, "bad serializer");
-            this.serializer = serializer;
+            this.serializer = Objects.requireNonNull(serializer, "bad serializer");
             return this;
         }
 
@@ -182,8 +181,7 @@ public class GoldFile {
          * @return the current builder
          */
         public Builder withDiffer(final Differ differ) {
-            Objects.requireNonNull(differ, "bad differ");
-            this.differ = differ;
+            this.differ = Objects.requireNonNull(differ, "bad differ");
             return this;
         }
 

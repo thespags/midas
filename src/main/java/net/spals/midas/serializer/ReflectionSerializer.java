@@ -141,7 +141,7 @@ public final class ReflectionSerializer implements Serializer {
          * @return the current builder
          */
         public Builder registerField(final String field) {
-            filteredFields.add(field);
+            filteredFields.add(Objects.requireNonNull(field, "bad field"));
             return this;
         }
 
@@ -152,7 +152,7 @@ public final class ReflectionSerializer implements Serializer {
          * @return the current builder
          */
         public Builder registerFields(final String... fields) {
-            filteredFields.addAll(Arrays.asList(fields));
+            Arrays.stream(fields).forEach(this::registerField);
             return this;
         }
 
@@ -175,7 +175,10 @@ public final class ReflectionSerializer implements Serializer {
          * @return the current builder
          */
         public <T> Builder register(final Class<T> clazz, final TypedSerializer<T> serializer) {
-            registry.put(clazz, serializer);
+            registry.put(
+                Objects.requireNonNull(clazz, "bad class type"),
+                Objects.requireNonNull(serializer, "bad typed serializer")
+            );
             return this;
         }
 
@@ -186,7 +189,7 @@ public final class ReflectionSerializer implements Serializer {
          * @return the current builder
          */
         public Builder registerDefault(final Serializer serializer) {
-            defaultSerializer = serializer;
+            defaultSerializer = Objects.requireNonNull(serializer, "bad default serializer");
             return this;
         }
 

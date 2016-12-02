@@ -58,6 +58,9 @@ class ArraySerializer implements Serializer {
      */
     @Override
     public byte[] serialize(final Object array) {
-        return serializer.serialize(Arrays.asList(array));
+        // This isn't exposed externally so we are safe to assume its an array instance here.
+        final Object[] asArray = (Object[]) array;
+        // Now we can safely pass the array as a list and use the list serializer.
+        return serializer.serialize(Arrays.asList(asArray));
     }
 }

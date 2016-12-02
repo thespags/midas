@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Common utilities for encoding and decoding {@link String}s.
- *
+ * <p>
  * This includes a small {@link Cache} to speed up the process for
  * commonly encoded / decoded values.
  *
@@ -53,9 +53,7 @@ import java.util.concurrent.TimeUnit;
 final class StringEncoding {
 
     static final String NULL = "<null>";
-
     private static final StringEncoding INSTANCE = new StringEncoding(Ticker.systemTicker());
-
     private final LoadingCache<String, byte[]> stringToBytesCache;
     private final LoadingCache<byte[], String> bytesToStringCache;
 
@@ -77,7 +75,9 @@ final class StringEncoding {
 
     String decode(final byte[] bytes) {
         try {
-            return bytesToStringCache.get(bytes);
+            final String value = bytesToStringCache.get(bytes);
+            stringToBytesCache.put(value, bytes);
+            return value;
         } catch (final ExecutionException x) {
             throw new RuntimeException(x);
         }
@@ -85,7 +85,9 @@ final class StringEncoding {
 
     byte[] encode(final String string) {
         try {
-            return stringToBytesCache.get(string);
+            final byte[] value = stringToBytesCache.get(string);
+            bytesToStringCache.put(value, string);
+            return value;
         } catch (final ExecutionException x) {
             throw new RuntimeException(x);
         }

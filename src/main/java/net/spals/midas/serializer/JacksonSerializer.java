@@ -16,8 +16,10 @@ class JacksonSerializer implements Serializer {
     private final String fileExtension;
     private final ObjectMapper objectMapper;
 
-    JacksonSerializer(final String fileExtension,
-                      final ObjectMapper objectMapper) {
+    JacksonSerializer(
+        final String fileExtension,
+        final ObjectMapper objectMapper
+    ) {
         this.fileExtension = fileExtension;
         this.objectMapper = objectMapper;
     }
@@ -37,7 +39,7 @@ class JacksonSerializer implements Serializer {
     public byte[] serialize(final Object input) {
         try {
             return objectMapper.writeValueAsBytes(input);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
