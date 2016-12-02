@@ -42,7 +42,7 @@ class ArraySerializer<T> implements Serializer<T[]> {
 
     private final IterableSerializer serializer;
 
-    public ArraySerializer(final SerializerMap serializers) {
+    ArraySerializer(final SerializerMap serializers) {
         Objects.requireNonNull(serializers, "bad serializer map");
         serializer = new IterableSerializer(serializers);
     }

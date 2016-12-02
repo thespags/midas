@@ -35,8 +35,10 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * For a given {@link Map}<K, V>, this will use the {@link Serializer} provided for K, V to serialize.
- * <br>This will be represented as (serialize(K) => serialize(V), ...)
+ * For a given {@code Map<K, V>}, this will use the {@link Serializer} provided for K, V to serialize.
+ * <pre>
+ * This will be represented as (serialize(K) => serialize(V), ...)
+ * </pre>
  *
  * @author spags
  */
