@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, spals
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -30,6 +30,8 @@
 
 package net.spals.midas.serializer;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import net.spals.midas.GoldFileException;
 
 import java.lang.reflect.Field;
@@ -55,7 +57,7 @@ public final class ReflectionSerializer implements Serializer {
 
     private final SerializerRegistry registry;
     private final boolean writeNull;
-    private final Set<String> filteredFields;
+    private final Set<String> masterFilterFields;
     private final boolean filterFields;
     private final Serializer defaultSerializer;
 
@@ -63,7 +65,7 @@ public final class ReflectionSerializer implements Serializer {
         registry = builder.registry;
         writeNull = builder.writeNull;
         defaultSerializer = builder.defaultSerializer;
-        filteredFields = builder.filteredFields;
+        masterFilterFields = ImmutableSet.copyOf(builder.filteredFields);
         filterFields = !builder.filteredFields.isEmpty();
     }
 
@@ -79,6 +81,9 @@ public final class ReflectionSerializer implements Serializer {
     public byte[] serialize(final Object input) {
         final Field[] fields = input.getClass().getDeclaredFields();
         final StringBuilder builder = new StringBuilder();
+        // Guarantees fields that were registered are used.
+        final Set<String> filteredFields = Sets.newHashSet(masterFilterFields);
+
         for (final Field field : fields) {
             field.setAccessible(true);
             try {
@@ -90,18 +95,11 @@ public final class ReflectionSerializer implements Serializer {
 
                 // If the field is not null or we write null then emit
                 if (fieldValue != null || writeNull) {
+                    final Class clazz = field.getType();
                     builder.append(field.getName())
-                        .append(" = ");
-                    if (fieldValue != null) {
-                        final Class clazz = field.getType();
-
-                        //noinspection unchecked
-                        builder.append(StringEncoding.get().decode(getSerializer(clazz).serialize(fieldValue)));
-                    } else {
-                        // its null so emit this placeholder
-                        builder.append(StringEncoding.NULL);
-                    }
-                    builder.append("\n");
+                        .append(" = ")
+                        .append(StringEncoding.get().decode(getSerializer(clazz).serialize(fieldValue)))
+                        .append("\n");
                 }
             } catch (final IllegalAccessException e) {
                 // This shouldn't happen because we set accessible to true.
@@ -132,6 +130,7 @@ public final class ReflectionSerializer implements Serializer {
         private Builder() {
             registry = SerializerRegistry.make();
             filteredFields = new HashSet<>();
+            defaultSerializer = Serializers.newDefault();
         }
 
         /**

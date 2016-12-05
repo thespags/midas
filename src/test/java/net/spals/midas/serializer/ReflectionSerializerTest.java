@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, spals
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -158,16 +158,10 @@ public class ReflectionSerializerTest {
 
     @Test
     public void testNoDefaultSerializer() {
-        final Serializer serializer = ReflectionSerializer.builder()
-            .build();
-        catchException(() -> serializer.serialize(new Default()));
-        assertThat(
-            caughtException(),
-            allOf(
-                instanceOf(NullPointerException.class),
-                hasMessage("missing serializer: class net.spals.midas.serializer.ReflectionSerializerTest$Foo")
-            )
-        );
+        final byte[] actual = ReflectionSerializer.builder()
+            .build()
+            .serialize(new Default());
+        assertThat(actual, bytes("foo = Foo\n"));
     }
 
     @SuppressWarnings("unused")
