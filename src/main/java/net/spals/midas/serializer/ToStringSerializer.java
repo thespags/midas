@@ -70,7 +70,7 @@ class ToStringSerializer implements Serializer {
         // attempt to circumnavigate this with reflection.
         if (inputString.equals(toObjectString(input))) {
             final Optional<Serializer> registeredSerializer = registry.get(input.getClass());
-            // See if we have a pre-registered serializer available for this typeAttempt to
+            // See if we have a pre-registered serializer available for this type
             return registeredSerializer.map(serializer -> serializer.serialize(input))
                     // Fallback to the reflection serializer
                     .orElseGet(() -> new ReflectionSerializer().serialize(input));
