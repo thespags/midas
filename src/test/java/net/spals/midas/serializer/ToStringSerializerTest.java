@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2015, James T Spagnola & Timothy P Kral
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -30,27 +30,41 @@
 
 package net.spals.midas.serializer;
 
-import java.util.Optional;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import static net.spals.midas.serializer.ByteMatcher.bytes;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Calls {@link #toString()} for a given type T.
- * If the input is null then will return a string of {@code "<null>"}
+ * Unit tests for {@link ToStringSerializer}.
  *
  * @author spags
- * @author tkral
  */
-class DefaultSerializer implements Serializer {
+public class ToStringSerializerTest {
 
-    DefaultSerializer() {  }
+    @DataProvider
+    Object[][] serializeProvider() {
+        return new Object[][] {
+                // Case: Primitive
+                {1, "1"},
+                // Case: Primitive array
+                {new int[]{1}, "[1]"},
+                // Case: Primitive wrapper
+                {Integer.valueOf(1), "1"},
+                // Case: Primitive wrapper array
+                {new Integer[]{Integer.valueOf(1)}, "[1]"},
+                // Case: Implemented toString()
+                {"foo", "foo"},
+                // Case: String array
+                {new String[]{"foo"}, "[foo]"},
+                // Case: Null value
+                {null, "<null>"},
+        };
+    }
 
-    /**
-     * @see Serializer#serialize(Object)
-     */
-    @Override
-    public byte[] serialize(final Object input) {
-
-        return Optional.ofNullable(input)
-                .map(in -> StringEncoding.get().encode(in.toString()))
-                .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
+    @Test(dataProvider = "serializeProvider")
+    public void testSerialize(final Object input, final String expectedOutput) {
+        assertThat(Serializers.newToString().serialize(input), bytes(expectedOutput));
     }
 }

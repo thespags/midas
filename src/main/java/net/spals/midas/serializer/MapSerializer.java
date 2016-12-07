@@ -66,9 +66,11 @@ class MapSerializer implements Serializer {
             StreamSupport.stream(((Map<?, ?>) map).entrySet().spliterator(), false)
                 .map(
                     entry ->
-                        StringEncoding.get().decode(registry.getUnsafe(entry.getKey().getClass()).serialize(entry.getKey()))
+                        StringEncoding.get().decode(registry.getUnsafe(entry.getKey().getClass())
+                                .orElseThrow(() -> new RuntimeException("No serializer found for type " + entry.getKey().getClass())).serialize(entry.getKey()))
                             + " -> "
-                            + StringEncoding.get().decode(registry.getUnsafe(entry.getValue().getClass()).serialize(entry.getValue()))
+                            + StringEncoding.get().decode(registry.getUnsafe(entry.getValue().getClass())
+                                .orElseThrow(() -> new RuntimeException("No serializer found for type " + entry.getValue().getClass())).serialize(entry.getValue()))
                 )
                 .collect(Collectors.joining(", ", "(", ")"))
         );

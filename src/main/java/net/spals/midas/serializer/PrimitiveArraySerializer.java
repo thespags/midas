@@ -31,7 +31,6 @@
 package net.spals.midas.serializer;
 
 import java.lang.reflect.Array;
-import java.util.Objects;
 
 /**
  * Handles primitive arrays which can be handled by the generic {@link ArraySerializer}.
@@ -40,12 +39,9 @@ import java.util.Objects;
  */
 class PrimitiveArraySerializer implements Serializer {
 
-    private final SerializerRegistry registry;
+    private static final Serializer primitiveSerializer = new ToStringSerializer();
 
-    PrimitiveArraySerializer(final SerializerRegistry registry) {
-        Objects.requireNonNull(registry, "bad serializer map");
-        this.registry = registry;
-    }
+    PrimitiveArraySerializer() {  }
 
     @Override
     public String fileExtension() {
@@ -66,7 +62,8 @@ class PrimitiveArraySerializer implements Serializer {
                 builder.append(", ");
             }
             final Object o = Array.get(value, i);
-            builder.append(StringEncoding.get().decode(registry.getUnsafe(o.getClass()).serialize(o)));
+
+            builder.append(StringEncoding.get().decode(primitiveSerializer.serialize(o)));
         }
         builder.append("]");
         return StringEncoding.get().encode(builder.toString());

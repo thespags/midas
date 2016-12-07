@@ -44,7 +44,7 @@ public class MapSerializerTest {
     @Test
     public void testSerialize() {
         final Map<String, Integer> map = ImmutableMap.of("foo", 1);
-        final byte[] actual = new MapSerializer(SerializerRegistry.make().putJava()).serialize(map);
+        final byte[] actual = new MapSerializer(SerializerRegistry.newDefault()).serialize(map);
         MatcherAssert.assertThat(actual, ByteMatcher.bytes("(foo -> 1)"));
     }
 }

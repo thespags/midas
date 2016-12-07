@@ -93,7 +93,6 @@ public class GoldFileTest {
     public void testReflection() {
         GoldFile.builder()
             .withPath(GoldPaths.simpleClass(GoldPaths.MAVEN, GoldFileTest.class))
-            .withReflectionSerializer()
             .build()
             .run(new Foo(), methodPath);
     }

@@ -132,7 +132,7 @@ public class GoldFile {
 
         private Builder() {
             path = GoldPaths.simple();
-            serializer = Serializers.newDefault();
+            serializer = Serializers.newToString();
             files = new FileUtil();
             differ = Differs.strings();
         }
@@ -152,15 +152,6 @@ public class GoldFile {
         public Builder withPath(final GoldPath path) {
             this.path = Objects.requireNonNull(path, "bad path");
             return this;
-        }
-
-        /**
-         * Basic reflection serializer using default built in serializers for java types.
-         *
-         * @return the current builder
-         */
-        public Builder withReflectionSerializer() {
-            return withSerializer(ReflectionSerializer.builder().registerJava().build());
         }
 
         /**

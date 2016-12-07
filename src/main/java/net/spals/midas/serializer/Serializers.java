@@ -44,16 +44,16 @@ public final class Serializers {
 
     private Serializers() {  }
 
-    public static Serializer newDefault() {
-        return new DefaultSerializer();
-    }
-
     public static Serializer newJackson(final String fileExtension, final ObjectMapper objectMapper) {
         return new JacksonSerializer(fileExtension, objectMapper);
     }
 
     public static Serializer newJson() {
         return new JacksonSerializer("json", new ObjectMapper(new JsonFactory()));
+    }
+
+    public static Serializer newToString() {
+        return new ToStringSerializer();
     }
 
     public static Serializer newXml() {

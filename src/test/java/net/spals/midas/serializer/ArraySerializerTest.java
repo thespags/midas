@@ -43,7 +43,7 @@ public class ArraySerializerTest {
     @Test
     public void testSerialize() {
         final Integer[] array = new Integer[]{1, 2, 3};
-        final byte[] actual = new ArraySerializer(SerializerRegistry.make().putJava()).serialize(array);
+        final byte[] actual = new ArraySerializer(SerializerRegistry.newDefault()).serialize(array);
         assertThat(actual, bytes("[1, 2, 3]"));
     }
 }

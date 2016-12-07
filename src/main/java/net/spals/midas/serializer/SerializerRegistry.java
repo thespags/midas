@@ -32,9 +32,12 @@ package net.spals.midas.serializer;
 
 import com.google.common.base.Preconditions;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A mapping of types to their serializer.
@@ -48,16 +51,75 @@ import java.util.Objects;
  */
 class SerializerRegistry {
 
+    static SerializerRegistry newDefault() {
+        final SerializerRegistry registry = new SerializerRegistry();
+
+        final ArraySerializer arraySerializer = new ArraySerializer(registry);
+        final PrimitiveArraySerializer primitiveArraySerializer = new PrimitiveArraySerializer();
+        final ToStringSerializer toStringSerializer = new ToStringSerializer();
+        
+        registry.put(boolean.class, toStringSerializer);
+        registry.put(boolean[].class, primitiveArraySerializer);
+        registry.put(Boolean.class, toStringSerializer);
+        registry.put(Boolean[].class, arraySerializer);
+
+        registry.put(short.class, toStringSerializer);
+        registry.put(short[].class, primitiveArraySerializer);
+        registry.put(Short.class, toStringSerializer);
+        registry.put(Short[].class, arraySerializer);
+
+        registry.put(int.class, toStringSerializer);
+        registry.put(int[].class, primitiveArraySerializer);
+        registry.put(Integer.class, toStringSerializer);
+        registry.put(Integer[].class, arraySerializer);
+
+        registry.put(long.class, toStringSerializer);
+        registry.put(long[].class, primitiveArraySerializer);
+        registry.put(Long.class, toStringSerializer);
+        registry.put(Long[].class, arraySerializer);
+
+        registry.put(double.class, toStringSerializer);
+        registry.put(double[].class, primitiveArraySerializer);
+        registry.put(Double.class, toStringSerializer);
+        registry.put(Double[].class, arraySerializer);
+
+        registry.put(float.class, toStringSerializer);
+        registry.put(float[].class, primitiveArraySerializer);
+        registry.put(Float.class, toStringSerializer);
+        registry.put(Float[].class, arraySerializer);
+
+        registry.put(char.class, toStringSerializer);
+        registry.put(char[].class, primitiveArraySerializer);
+        registry.put(Character.class, toStringSerializer);
+        registry.put(Character[].class, arraySerializer);
+
+        registry.put(byte.class, toStringSerializer);
+        registry.put(byte[].class, primitiveArraySerializer);
+        registry.put(Byte.class, toStringSerializer);
+        registry.put(Byte[].class, arraySerializer);
+
+        registry.put(BigDecimal.class, toStringSerializer);
+        registry.put(BigDecimal[].class, arraySerializer);
+        registry.put(BigInteger.class, toStringSerializer);
+        registry.put(BigInteger[].class, arraySerializer);
+        
+        registry.put(String.class, toStringSerializer);
+        registry.put(String[].class, arraySerializer);
+
+        registry.put(Map.class, new MapSerializer(registry));
+        registry.put(Iterable.class, new IterableSerializer(registry));
+
+        return registry;
+    }
+
+    static SerializerRegistry newEmpty() {
+        return new SerializerRegistry();
+    }
+
     private final Map<Class<?>, Serializer> serializers;
-    private final PrimitiveArraySerializer arraySerializer;
 
     private SerializerRegistry() {
         serializers = new LinkedHashMap<>();
-        arraySerializer = new PrimitiveArraySerializer(this);
-    }
-
-    static SerializerRegistry make() {
-        return new SerializerRegistry();
     }
 
     <T> void put(final Class<T> clazz, final Serializer serializer) {
@@ -74,58 +136,23 @@ class SerializerRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    <T> Serializer get(final Class<T> clazz) {
+    <T> Optional<Serializer> get(final Class<T> clazz) {
         return getUnsafe(clazz);
     }
 
-    Serializer getUnsafe(final Class<?> clazz) {
-        if (serializers.containsKey(clazz)) {
-            return serializers.get(clazz);
+    Optional<Serializer> getUnsafe(final Class<?> clazz) {
+        final Optional<Serializer> registeredSerializer = Optional.ofNullable(serializers.get(clazz));
+        if (registeredSerializer.isPresent()) {
+            return registeredSerializer;
         }
-        if (clazz.isArray()) {
-            return arraySerializer;
-        }
+
         // No exact class, try to find an assignable one.
         for (final Map.Entry<Class<?>, Serializer> entry : serializers.entrySet()) {
             if (entry.getKey().isAssignableFrom(clazz)) {
-                return entry.getValue();
+                return Optional.of(entry.getValue());
             }
         }
-        return null;
-    }
 
-    /**
-     * Adds primitive serializer, plus String, Map, and Iterable.
-     */
-    SerializerRegistry putJava() {
-        putIfMissing(boolean.class, Serializers.newDefault());
-        putIfMissing(Boolean.class, Serializers.newDefault());
-
-        putIfMissing(short.class, Serializers.newDefault());
-        putIfMissing(Short.class, Serializers.newDefault());
-
-        putIfMissing(int.class, Serializers.newDefault());
-        putIfMissing(Integer.class, Serializers.newDefault());
-
-        putIfMissing(long.class, Serializers.newDefault());
-        putIfMissing(Long.class, Serializers.newDefault());
-
-        putIfMissing(double.class, Serializers.newDefault());
-        putIfMissing(Double.class, Serializers.newDefault());
-
-        putIfMissing(float.class, Serializers.newDefault());
-        putIfMissing(Float.class, Serializers.newDefault());
-
-        putIfMissing(char.class, Serializers.newDefault());
-        putIfMissing(Character.class, Serializers.newDefault());
-
-        putIfMissing(byte.class, Serializers.newDefault());
-        putIfMissing(Byte.class, Serializers.newDefault());
-
-        putIfMissing(String.class, Serializers.newDefault());
-
-        putIfMissing(Map.class, new MapSerializer(this));
-        putIfMissing(Iterable.class, new IterableSerializer(this));
-        return this;
+        return Optional.empty();
     }
 }

@@ -71,6 +71,7 @@
         <java.version>1.8</java.version>
 
         <!-- Dependency versions -->
+        <commons.lang3.version>3.5</commons.lang3.version>
         <guava.version>20.0</guava.version>
         <jackson.version>2.8.5</jackson.version>
         <mockito.version>2.2.26</mockito.version>
@@ -125,6 +126,11 @@
             <groupId>com.googlecode.java-diff-utils</groupId>
             <artifactId>diffutils</artifactId>
             <version>${diffutils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang3.version}</version>
         </dependency>
         <!-- hamcrest needs to be before mockito/testng otherwise the wrong assert is used -->
         <dependency>

@@ -45,7 +45,7 @@ public class PerfTest {
         long total = 0;
         long ptotal = 0;
         for (int k = 0; k < 10; k++) {
-            final SerializerRegistry registry = SerializerRegistry.make().putJava();
+            final SerializerRegistry registry = SerializerRegistry.newDefault();
 
             long start;
             start = System.currentTimeMillis();
@@ -56,7 +56,7 @@ public class PerfTest {
             System.err.println("ARRAY:" + finish);
 
             start = System.currentTimeMillis();
-            new PrimitiveArraySerializer(registry).serialize(i);
+            new PrimitiveArraySerializer().serialize(i);
             finish = System.currentTimeMillis() - start;
             ptotal += finish;
             System.err.println("PARRAY:" + finish);
