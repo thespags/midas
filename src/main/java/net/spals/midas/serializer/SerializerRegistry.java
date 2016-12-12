@@ -51,13 +51,19 @@ import java.util.Optional;
  */
 public class SerializerRegistry {
 
+    private final Map<Class<?>, Serializer> serializers;
+
+    private SerializerRegistry() {
+        serializers = new LinkedHashMap<>();
+    }
+
     public static SerializerRegistry newDefault() {
         final SerializerRegistry registry = new SerializerRegistry();
 
         final ArraySerializer arraySerializer = new ArraySerializer(registry);
         final PrimitiveArraySerializer primitiveArraySerializer = new PrimitiveArraySerializer();
         final ToStringSerializer toStringSerializer = new ToStringSerializer(registry);
-        
+
         registry.put(boolean.class, toStringSerializer);
         registry.put(boolean[].class, primitiveArraySerializer);
         registry.put(Boolean.class, toStringSerializer);
@@ -102,7 +108,7 @@ public class SerializerRegistry {
         registry.put(BigDecimal[].class, arraySerializer);
         registry.put(BigInteger.class, toStringSerializer);
         registry.put(BigInteger[].class, arraySerializer);
-        
+
         registry.put(String.class, toStringSerializer);
         registry.put(String[].class, arraySerializer);
 
@@ -116,27 +122,22 @@ public class SerializerRegistry {
         return new SerializerRegistry();
     }
 
-    private final Map<Class<?>, Serializer> serializers;
-
-    private SerializerRegistry() {
-        serializers = new LinkedHashMap<>();
-    }
-
-    <T> void put(final Class<T> clazz, final Serializer serializer) {
+    private <T> void put(final Class<T> clazz, final Serializer serializer) {
         Objects.requireNonNull(clazz, "null class provided");
         Objects.requireNonNull(serializer, "null serializer provided");
         Preconditions.checkArgument(!serializers.containsKey(clazz), "duplicate class: " + clazz);
         serializers.put(clazz, serializer);
     }
 
-    private <T> void putIfMissing(final Class<T> clazz, final Serializer serializer) {
+    public <T> void put(final Class<T> clazz, final TypedSerializer<T> serializer) {
         Objects.requireNonNull(clazz, "null class provided");
         Objects.requireNonNull(serializer, "null serializer provided");
-        serializers.computeIfAbsent(clazz, c -> serializer);
+        Preconditions.checkArgument(!serializers.containsKey(clazz), "duplicate class: " + clazz);
+        serializers.put(clazz, serializer);
     }
 
     @SuppressWarnings("unchecked")
-    <T> Optional<Serializer> get(final Class<T> clazz) {
+    private <T> Optional<Serializer> get(final Class<T> clazz) {
         return getUnsafe(clazz);
     }
 

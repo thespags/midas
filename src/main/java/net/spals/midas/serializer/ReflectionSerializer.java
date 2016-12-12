@@ -62,9 +62,10 @@ final class ReflectionSerializer implements Serializer {
             field.setAccessible(true);
             try {
                 final Object fieldValue = field.get(input);
-                builder.append(field.getName()).append(" = ")
-                        .append(StringEncoding.get().decode(serializeFieldValue(fieldValue)))
-                        .append("\n");
+                builder.append(field.getName())
+                    .append(" = ")
+                    .append(StringEncoding.get().decode(serializeFieldValue(fieldValue)))
+                    .append("\n");
             } catch (final IllegalAccessException e) {
                 // This shouldn't happen because we set accessible to true.
                 throw new GoldFileException("Couldn't access field " + field.getName());
@@ -76,8 +77,8 @@ final class ReflectionSerializer implements Serializer {
 
     public byte[] serializeFieldValue(final Object fieldValue) {
         final Serializer fieldValueSerializer = Optional.ofNullable(fieldValue)
-                .flatMap(fValue -> registry.getUnsafe(fValue.getClass()))
-                .orElseGet(() -> new ToStringSerializer(registry));
+            .flatMap(fValue -> registry.getUnsafe(fValue.getClass()))
+            .orElseGet(() -> new ToStringSerializer(registry));
         return fieldValueSerializer.serialize(fieldValue);
     }
 }

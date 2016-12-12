@@ -77,7 +77,7 @@ class IterableSerializer implements Serializer {
         return StringEncoding.get().encode(
             StreamSupport.stream(((Iterable<?>) iterable).spliterator(), false)
                 .map(v -> StringEncoding.get().decode(registry.getUnsafe(v.getClass())
-                        .orElseThrow(() -> new RuntimeException("No serializer found for type" + v.getClass())).serialize(v)))
+                    .orElseThrow(() -> new RuntimeException("No serializer found for type" + v.getClass())).serialize(v)))
                 .collect(joiner)
         );
     }
