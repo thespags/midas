@@ -30,7 +30,10 @@
 
 package net.spals.midas.serializer;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import net.spals.midas.GoldFileException;
+
+import java.lang.reflect.Field;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,13 +44,40 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author spags
  * @author tkral
  */
-public final class ReflectionSerializer implements Serializer {
+final class ReflectionSerializer implements Serializer {
 
-    ReflectionSerializer() {  }
+    private final SerializerRegistry registry;
+
+    ReflectionSerializer(final SerializerRegistry registry) {
+        this.registry = registry;
+    }
 
     @Override
     public byte[] serialize(final Object input) {
         checkNotNull(input);
-        return StringEncoding.get().encode(new ReflectionToStringBuilder(input).toString());
+        final Field[] fields = input.getClass().getDeclaredFields();
+        final StringBuilder builder = new StringBuilder();
+        // Guarantees fields that were registered are used.
+        for (final Field field : fields) {
+            field.setAccessible(true);
+            try {
+                final Object fieldValue = field.get(input);
+                builder.append(field.getName()).append(" = ")
+                        .append(StringEncoding.get().decode(serializeFieldValue(fieldValue)))
+                        .append("\n");
+            } catch (final IllegalAccessException e) {
+                // This shouldn't happen because we set accessible to true.
+                throw new GoldFileException("Couldn't access field " + field.getName());
+            }
+        }
+
+        return StringEncoding.get().encode(builder.toString());
+    }
+
+    public byte[] serializeFieldValue(final Object fieldValue) {
+        final Serializer fieldValueSerializer = Optional.ofNullable(fieldValue)
+                .flatMap(fValue -> registry.getUnsafe(fValue.getClass()))
+                .orElseGet(() -> new ToStringSerializer(registry));
+        return fieldValueSerializer.serialize(fieldValue);
     }
 }

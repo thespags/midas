@@ -49,14 +49,14 @@ import java.util.Optional;
  *
  * @author spags
  */
-class SerializerRegistry {
+public class SerializerRegistry {
 
-    static SerializerRegistry newDefault() {
+    public static SerializerRegistry newDefault() {
         final SerializerRegistry registry = new SerializerRegistry();
 
         final ArraySerializer arraySerializer = new ArraySerializer(registry);
         final PrimitiveArraySerializer primitiveArraySerializer = new PrimitiveArraySerializer();
-        final ToStringSerializer toStringSerializer = new ToStringSerializer();
+        final ToStringSerializer toStringSerializer = new ToStringSerializer(registry);
         
         registry.put(boolean.class, toStringSerializer);
         registry.put(boolean[].class, primitiveArraySerializer);
@@ -112,7 +112,7 @@ class SerializerRegistry {
         return registry;
     }
 
-    static SerializerRegistry newEmpty() {
+    public static SerializerRegistry newEmpty() {
         return new SerializerRegistry();
     }
 

@@ -50,7 +50,7 @@ public class ReflectionSerializerTest {
 
     @Test
     public void testSerialize() {
-        final byte[] actual = new ReflectionSerializer()
+        final byte[] actual = new ReflectionSerializer(SerializerRegistry.newDefault())
             .serialize(new Foo());
         final String expected =
             "littleInt = 0\n" +

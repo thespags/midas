@@ -52,8 +52,8 @@ public final class Serializers {
         return new JacksonSerializer("json", new ObjectMapper(new JsonFactory()));
     }
 
-    public static Serializer newToString() {
-        return new ToStringSerializer();
+    public static Serializer newToString(final SerializerRegistry registry) {
+        return new ToStringSerializer(registry);
     }
 
     public static Serializer newXml() {

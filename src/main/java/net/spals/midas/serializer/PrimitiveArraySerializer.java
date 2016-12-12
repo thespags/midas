@@ -39,7 +39,7 @@ import java.lang.reflect.Array;
  */
 class PrimitiveArraySerializer implements Serializer {
 
-    private static final Serializer primitiveSerializer = new ToStringSerializer();
+    private static final Serializer primitiveSerializer = new ToStringSerializer(SerializerRegistry.newDefault());
 
     PrimitiveArraySerializer() {  }
 

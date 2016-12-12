@@ -65,6 +65,6 @@ public class ToStringSerializerTest {
 
     @Test(dataProvider = "serializeProvider")
     public void testSerialize(final Object input, final String expectedOutput) {
-        assertThat(Serializers.newToString().serialize(input), bytes(expectedOutput));
+        assertThat(Serializers.newToString(SerializerRegistry.newDefault()).serialize(input), bytes(expectedOutput));
     }
 }

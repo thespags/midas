@@ -45,9 +45,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 class ToStringSerializer implements Serializer {
 
-    private static final SerializerRegistry registry = SerializerRegistry.newDefault();
+    private final SerializerRegistry registry;
 
-    ToStringSerializer() {  }
+    ToStringSerializer(final SerializerRegistry registry) {
+        this.registry = registry;
+    }
 
     /**
      * @see Serializer#serialize(Object)
@@ -73,7 +75,7 @@ class ToStringSerializer implements Serializer {
             // See if we have a pre-registered serializer available for this type
             return registeredSerializer.map(serializer -> serializer.serialize(input))
                     // Fallback to the reflection serializer
-                    .orElseGet(() -> new ReflectionSerializer().serialize(input));
+                    .orElseGet(() -> new ReflectionSerializer(registry).serialize(input));
         }
 
         // Otherwise, just return whatever the implemented toString()

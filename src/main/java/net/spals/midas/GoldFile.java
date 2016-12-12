@@ -36,8 +36,8 @@ import net.spals.midas.differ.Differs;
 import net.spals.midas.io.FileUtil;
 import net.spals.midas.io.GoldPath;
 import net.spals.midas.io.GoldPaths;
-import net.spals.midas.serializer.ReflectionSerializer;
 import net.spals.midas.serializer.Serializer;
+import net.spals.midas.serializer.SerializerRegistry;
 import net.spals.midas.serializer.Serializers;
 
 import java.nio.file.Path;
@@ -132,7 +132,7 @@ public class GoldFile {
 
         private Builder() {
             path = GoldPaths.simple();
-            serializer = Serializers.newToString();
+            serializer = Serializers.newToString(SerializerRegistry.newDefault());
             files = new FileUtil();
             differ = Differs.strings();
         }
