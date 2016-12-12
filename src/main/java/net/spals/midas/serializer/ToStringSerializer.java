@@ -30,22 +30,63 @@
 
 package net.spals.midas.serializer;
 
+import com.google.common.annotations.VisibleForTesting;
+
+import java.util.Objects;
+import java.util.Optional;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * Calls {@link #toString()} for a given type T.
- * If the input is null then will return a string of {@code "<null>"}
+ * A {@link Serializer} which attempts to create a {@link String}
+ * representation of an input {@link Object}.
  *
  * @author spags
+ * @author tkral
  */
-class ToStringSerializer<T> implements Serializer<T> {
+class ToStringSerializer implements Serializer {
+
+    private final SerializerRegistry registry;
+
+    ToStringSerializer(final SerializerRegistry registry) {
+        this.registry = registry;
+    }
 
     /**
-     * @param input the object to be serialized using its {@link Object#toString()}
-     * @return the bytes of the call to {@link Object#toString()}
+     * @see Serializer#serialize(Object)
      */
     @Override
-    public byte[] serialize(final T input) {
-        return input == null
-            ? Strings.get().encode(Strings.NULL)
-            : Strings.get().encode(input.toString());
+    public byte[] serialize(final Object input) {
+        return Optional.ofNullable(input)
+            .map(this::toStringSerialize)
+            .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
+    }
+
+    @VisibleForTesting
+    byte[] toStringSerialize(final Object input) {
+        checkNotNull(input);
+        final String inputString = input.toString();
+
+        // Check to see if we'd get the same String if the given input
+        // was a pure Object. If so, that means there's no toString()
+        // implementation in the input's class hierarchy. So we'll
+        // attempt to circumnavigate this with reflection.
+        if (Objects.equals(inputString, toObjectString(input))) {
+            final Optional<Serializer> registeredSerializer = registry.get(input.getClass());
+            // See if we have a pre-registered serializer available for this type
+            return registeredSerializer.map(serializer -> serializer.serialize(input))
+                    // Fallback to the reflection serializer
+                    .orElseGet(() -> new ReflectionSerializer(registry).serialize(input));
+        }
+
+        // Otherwise, just return whatever the implemented toString()
+        // gave us.
+        return StringEncoding.get().encode(inputString);
+    }
+
+    // Construct the String of the given input in pure Object form
+    @VisibleForTesting
+    String toObjectString(final Object input) {
+        return input.getClass().getName() + "@" + Integer.toHexString(input.hashCode());
     }
 }

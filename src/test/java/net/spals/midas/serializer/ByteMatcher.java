@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, spals
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -54,12 +54,12 @@ public class ByteMatcher extends TypeSafeDiagnosingMatcher<byte[]> {
 
     @Override
     protected boolean matchesSafely(final byte[] bytes, final Description description) {
-        description.appendText(Strings.get().decode(bytes));
-        return Arrays.equals(bytes, Strings.get().encode(expected));
+        description.appendValue(StringEncoding.get().decode(bytes));
+        return Arrays.equals(bytes, StringEncoding.get().encode(expected));
     }
 
     @Override
     public void describeTo(final Description description) {
-        description.appendText(expected);
+        description.appendValue(expected);
     }
 }

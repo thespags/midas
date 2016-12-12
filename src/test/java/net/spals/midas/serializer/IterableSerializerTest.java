@@ -49,21 +49,21 @@ public class IterableSerializerTest {
     @Test
     public void testSetSerialize() {
         final Set<String> set = ImmutableSet.of("foo", "bar");
-        final byte[] actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(set);
+        final byte[] actual = new IterableSerializer(SerializerRegistry.newDefault()).serialize(set);
         assertThat(actual, bytes("{foo, bar}"));
     }
 
     @Test
     public void testListSerialize() {
         final List<String> list = ImmutableList.of("foo", "bar");
-        final byte[] actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(list);
+        final byte[] actual = new IterableSerializer(SerializerRegistry.newDefault()).serialize(list);
         assertThat(actual, bytes("[foo, bar]"));
     }
 
     @Test
     public void testRandomIterableSerialize() {
         final Foo<String> foo = new Foo<>(ImmutableList.of("foo", "bar"));
-        final byte[] actual = new IterableSerializer(SerializerMap.make().putJava()).serialize(foo);
+        final byte[] actual = new IterableSerializer(SerializerRegistry.newDefault()).serialize(foo);
         assertThat(actual, bytes("(foo, bar)"));
     }
 

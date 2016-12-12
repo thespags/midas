@@ -51,7 +51,7 @@ public class GoldOptionsTest {
     private static final byte[] BYTES = "foo".getBytes();
     @Mock
     private FileUtil files;
-    private GoldFile<String> gold;
+    private GoldFile gold;
 
     @BeforeMethod
     public void setUp(final Method method) {

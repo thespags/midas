@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, James T Spagnola & Timothy P Kral
+ * Copyright (c) 2016, spals
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -40,13 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
-import static com.googlecode.catchexception.apis.CatchExceptionHamcrestMatchers.hasMessage;
 import static net.spals.midas.serializer.ByteMatcher.bytes;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.instanceOf;
 
 /**
  * @author spags
@@ -55,9 +50,7 @@ public class ReflectionSerializerTest {
 
     @Test
     public void testSerialize() {
-        final byte[] actual = ReflectionSerializer.builder()
-            .registerJava()
-            .build()
+        final byte[] actual = new ReflectionSerializer(SerializerRegistry.newDefault())
             .serialize(new Foo());
         final String expected =
             "littleInt = 0\n" +
@@ -80,94 +73,6 @@ public class ReflectionSerializerTest {
                 "intSet = {2, 4, 6}\n" +
                 "map = (foo -> 1)\n";
         assertThat(actual, bytes(expected));
-    }
-
-    @Test
-    public void testRegisterField() {
-        final byte[] actual = ReflectionSerializer.builder()
-            .registerField("littleInt")
-            .registerJava()
-            .build()
-            .serialize(new Foo());
-        final String expected = "littleInt = 0\n";
-        assertThat(actual, bytes(expected));
-    }
-
-    @Test
-    public void testRegisterFields() {
-        final byte[] actual = ReflectionSerializer.builder()
-            .registerFields("littleInt", "bigInt")
-            .registerJava()
-            .build()
-            .serialize(new Foo());
-        final String expected =
-            "littleInt = 0\n" +
-                "bigInt = 1\n";
-        assertThat(actual, bytes(expected));
-    }
-
-    @Test
-    public void testRegisterBadField() {
-        final Serializer<Foo> serializer = ReflectionSerializer.builder()
-            .registerFields("nonExistentField")
-            .registerJava()
-            .build();
-        catchException(() -> serializer.serialize(new Foo()));
-        assertThat(
-            caughtException(),
-            allOf(
-                instanceOf(IllegalStateException.class),
-                hasMessage("unmatched fields: [nonExistentField]")
-            )
-        );
-    }
-
-    @Test
-    public void testRegisterSerializer() {
-        final byte[] actual = ReflectionSerializer.builder()
-            .register(
-                Foo.class,
-                input -> Strings.get().encode("Foo Class serializer")
-            )
-            .build()
-            .serialize(new Default());
-        assertThat(actual, bytes("foo = Foo Class serializer\n"));
-    }
-
-    @Test
-    public void testDefaultSerializer() {
-        final byte[] actual = ReflectionSerializer.builder()
-            .registerDefault(Serializers.of())
-            .build()
-            .serialize(new Default());
-        assertThat(actual, bytes("foo = Foo\n"));
-    }
-
-    @Test
-    public void testWriteNull() {
-        final byte[] actual = ReflectionSerializer.builder()
-            .registerDefault(Serializers.of())
-            .writeNull()
-            .build()
-            .serialize(new Default());
-        final String value =
-            "foo = Foo\n" +
-                "nullFoo = <null>\n";
-        assertThat(actual, bytes(value));
-    }
-
-    @Test
-    public void testNoDefaultSerializer() {
-        final Serializer<Default> serializer = ReflectionSerializer.builder()
-            .build();
-        catchException(() -> serializer.serialize(new Default()));
-        assertThat(
-            caughtException(),
-            allOf(
-                instanceOf(NullPointerException.class),
-                hasMessage("missing serializer: class net.spals.midas.serializer.ReflectionSerializerTest$Foo")
-            )
-        );
     }
 
     @SuppressWarnings("unused")

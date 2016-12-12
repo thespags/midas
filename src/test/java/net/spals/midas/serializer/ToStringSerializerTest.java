@@ -30,23 +30,41 @@
 
 package net.spals.midas.serializer;
 
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static net.spals.midas.serializer.ByteMatcher.bytes;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
+ * Unit tests for {@link ToStringSerializer}.
+ *
  * @author spags
  */
 public class ToStringSerializerTest {
 
-    @Test
-    public void testSerialize() {
-        assertThat(Serializers.of().serialize("foo"), bytes("foo"));
+    @DataProvider
+    Object[][] serializeProvider() {
+        return new Object[][]{
+            // Case: Primitive
+            {1, "1"},
+            // Case: Primitive array
+            {new int[]{1}, "[1]"},
+            // Case: Primitive wrapper
+            {Integer.valueOf(1), "1"},
+            // Case: Primitive wrapper array
+            {new Integer[]{Integer.valueOf(1)}, "[1]"},
+            // Case: Implemented toString()
+            {"foo", "foo"},
+            // Case: String array
+            {new String[]{"foo"}, "[foo]"},
+            // Case: Null value
+            {null, "<null>"},
+        };
     }
 
-    @Test
-    public void testNullSerialize() {
-        assertThat(Serializers.of().serialize(null), bytes("<null>"));
+    @Test(dataProvider = "serializeProvider")
+    public void testSerialize(final Object input, final String expectedOutput) {
+        assertThat(Serializers.newToString(SerializerRegistry.newDefault()).serialize(input), bytes(expectedOutput));
     }
 }

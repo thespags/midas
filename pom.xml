@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016, James T Spagnola & Timothy P Kral
+  ~ Copyright (c) 2016, spals
   ~ All rights reserved.
   ~
   ~ Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -71,12 +71,13 @@
         <java.version>1.8</java.version>
 
         <!-- Dependency versions -->
-        <catch-exception.version>2.0.0-ALPHA-1</catch-exception.version>
         <guava.version>20.0</guava.version>
+        <jackson.version>2.8.5</jackson.version>
         <mockito.version>2.2.26</mockito.version>
         <testng.version>6.9.10</testng.version>
         <hamcrest.version>2.0.0.0</hamcrest.version>
         <diffutils.version>1.3.0</diffutils.version>
+        <catch-exception.version>2.0.0-ALPHA-1</catch-exception.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
@@ -89,11 +90,20 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.googlecode.java-diff-utils</groupId>
-            <artifactId>diffutils</artifactId>
-            <version>${diffutils.version}</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -104,6 +114,17 @@
             <artifactId>guava-testlib</artifactId>
             <version>${guava.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.java-diff-utils</groupId>
+            <artifactId>diffutils</artifactId>
+            <version>${diffutils.version}</version>
         </dependency>
         <!-- hamcrest needs to be before mockito/testng otherwise the wrong assert is used -->
         <dependency>
@@ -113,15 +134,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
