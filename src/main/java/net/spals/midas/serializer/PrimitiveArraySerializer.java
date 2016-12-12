@@ -39,9 +39,10 @@ import java.lang.reflect.Array;
  */
 class PrimitiveArraySerializer implements Serializer {
 
-    private static final Serializer primitiveSerializer = new ToStringSerializer(SerializerRegistry.newDefault());
+    private static final Serializer PRIMITIVE_SERIALIZER = new ToStringSerializer(SerializerRegistry.newDefault());
 
-    PrimitiveArraySerializer() {  }
+    PrimitiveArraySerializer() {
+    }
 
     @Override
     public String fileExtension() {
@@ -63,7 +64,7 @@ class PrimitiveArraySerializer implements Serializer {
             }
             final Object o = Array.get(value, i);
 
-            builder.append(StringEncoding.get().decode(primitiveSerializer.serialize(o)));
+            builder.append(StringEncoding.get().decode(PRIMITIVE_SERIALIZER.serialize(o)));
         }
         builder.append("]");
         return StringEncoding.get().encode(builder.toString());

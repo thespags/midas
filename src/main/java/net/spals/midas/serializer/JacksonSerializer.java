@@ -42,7 +42,7 @@ class JacksonSerializer implements Serializer {
     @Override
     public byte[] serialize(final Object input) {
         return Optional.ofNullable(input)
-                .map(in -> jacksonSerialize(in))
+                .map(this::jacksonSerialize)
                 .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
     }
 
@@ -51,7 +51,7 @@ class JacksonSerializer implements Serializer {
         checkNotNull(input);
         try {
             return objectMapper.writeValueAsBytes(input);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
