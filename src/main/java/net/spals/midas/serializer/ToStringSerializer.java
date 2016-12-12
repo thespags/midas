@@ -32,6 +32,7 @@ package net.spals.midas.serializer;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -45,9 +46,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 class ToStringSerializer implements Serializer {
 
-    private static final SerializerRegistry registry = SerializerRegistry.newDefault();
+    private static final SerializerRegistry REGISTRY = SerializerRegistry.newDefault();
 
-    ToStringSerializer() {  }
+    ToStringSerializer() {
+    }
 
     /**
      * @see Serializer#serialize(Object)
@@ -55,8 +57,8 @@ class ToStringSerializer implements Serializer {
     @Override
     public byte[] serialize(final Object input) {
         return Optional.ofNullable(input)
-                .map(in -> toStringSerialize(in))
-                .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
+            .map(this::toStringSerialize)
+            .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
     }
 
     @VisibleForTesting
@@ -68,12 +70,12 @@ class ToStringSerializer implements Serializer {
         // was a pure Object. If so, that means there's no toString()
         // implementation in the input's class hierarchy. So we'll
         // attempt to circumnavigate this with reflection.
-        if (inputString.equals(toObjectString(input))) {
-            final Optional<Serializer> registeredSerializer = registry.get(input.getClass());
+        if (Objects.equals(inputString, toObjectString(input))) {
+            final Optional<Serializer> registeredSerializer = REGISTRY.get(input.getClass());
             // See if we have a pre-registered serializer available for this type
             return registeredSerializer.map(serializer -> serializer.serialize(input))
-                    // Fallback to the reflection serializer
-                    .orElseGet(() -> new ReflectionSerializer().serialize(input));
+                // Fallback to the reflection serializer
+                .orElseGet(() -> new ReflectionSerializer().serialize(input));
         }
 
         // Otherwise, just return whatever the implemented toString()

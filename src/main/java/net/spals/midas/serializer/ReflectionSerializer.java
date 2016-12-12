@@ -43,7 +43,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class ReflectionSerializer implements Serializer {
 
-    ReflectionSerializer() {  }
+    ReflectionSerializer() {
+    }
 
     @Override
     public byte[] serialize(final Object input) {

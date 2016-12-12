@@ -36,7 +36,6 @@ import net.spals.midas.differ.Differs;
 import net.spals.midas.io.FileUtil;
 import net.spals.midas.io.GoldPath;
 import net.spals.midas.io.GoldPaths;
-import net.spals.midas.serializer.ReflectionSerializer;
 import net.spals.midas.serializer.Serializer;
 import net.spals.midas.serializer.Serializers;
 

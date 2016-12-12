@@ -45,21 +45,21 @@ public class ToStringSerializerTest {
 
     @DataProvider
     Object[][] serializeProvider() {
-        return new Object[][] {
-                // Case: Primitive
-                {1, "1"},
-                // Case: Primitive array
-                {new int[]{1}, "[1]"},
-                // Case: Primitive wrapper
-                {Integer.valueOf(1), "1"},
-                // Case: Primitive wrapper array
-                {new Integer[]{Integer.valueOf(1)}, "[1]"},
-                // Case: Implemented toString()
-                {"foo", "foo"},
-                // Case: String array
-                {new String[]{"foo"}, "[foo]"},
-                // Case: Null value
-                {null, "<null>"},
+        return new Object[][]{
+            // Case: Primitive
+            {1, "1"},
+            // Case: Primitive array
+            {new int[]{1}, "[1]"},
+            // Case: Primitive wrapper
+            {Integer.valueOf(1), "1"},
+            // Case: Primitive wrapper array
+            {new Integer[]{Integer.valueOf(1)}, "[1]"},
+            // Case: Implemented toString()
+            {"foo", "foo"},
+            // Case: String array
+            {new String[]{"foo"}, "[foo]"},
+            // Case: Null value
+            {null, "<null>"},
         };
     }
 
