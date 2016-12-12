@@ -137,7 +137,7 @@ public class SerializerRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Optional<Serializer> get(final Class<T> clazz) {
+    <T> Optional<Serializer> get(final Class<T> clazz) {
         return getUnsafe(clazz);
     }
 
