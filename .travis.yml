@@ -16,6 +16,6 @@ install:
 script:
   - mvn --batch-mode test
 
-deploy:
+#deploy:
   # Only deploy on successful merge into master
-  - ([[ ${TRAVIS_BRANCH} == "master" && ${TRAVIS_PULL_REQUEST} == false ]] && mvn --batch-mode deploy -DskipTests)
+#  - ([[ ${TRAVIS_BRANCH} == "master" && ${TRAVIS_PULL_REQUEST} == false ]] && mvn --batch-mode deploy -DskipTests)
