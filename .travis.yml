@@ -18,22 +18,22 @@ before_install:
   - wget https://raw.githubusercontent.com/spals/parent-pom/master/.travis/settings.xml -O ${HOME}/.travis/settings.xml
 
 install:
-  - mvn --settings .travis/settings.xml --show-version dependency:resolve
-  - mvn --settings .travis/settings.xml --show-version dependency:resolve-plugins
+  - mvn --settings ${HOME}/.travis/settings.xml --show-version dependency:resolve
+  - mvn --settings ${HOME}/.travis/settings.xml --show-version dependency:resolve-plugins
 
 script:
-  - mvn --batch-mode --settings .travis/settings.xml --show-version test
+  - mvn --batch-mode --settings ${HOME}/.travis/settings.xml --show-version test
 
 deploy:
   - provider: script
-    script: .travis/deploy-lib.sh
+    script: ${HOME}/.travis/deploy-lib.sh ${HOME}/.travis/settings.xml
     skip_cleanup: true
     on:
       repo: spals/midas
       branch: master
       jdk: oraclejdk8
   - provider: script
-    script: .travis/deploy-lib.sh
+    script: ${HOME}/.travis/deploy-lib.sh ${HOME}/.travis/settings.xml
     skip_cleanup: true
     on:
       repo: spals/midas
