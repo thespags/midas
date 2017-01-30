@@ -30,14 +30,14 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: .travis/deploy-lib.sh .travis/settings.xml
+    script: bash .travis/deploy-lib.sh .travis/settings.xml
     skip_cleanup: true
     on:
       repo: spals/midas
       branch: master
       jdk: oraclejdk8
   - provider: script
-    script: .travis/deploy-lib.sh .travis/settings.xml
+    script: bash .travis/deploy-lib.sh .travis/settings.xml
     skip_cleanup: true
     on:
       repo: spals/midas
