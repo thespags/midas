@@ -13,31 +13,31 @@ cache:
 before_install:
   - if [ ! -z "${GPG_SECRET_KEYS}" ]; then echo ${GPG_SECRET_KEYS} | base64 --decode | ${GPG_EXECUTABLE} --import; fi
   - if [ ! -z "${GPG_OWNERTRUST}" ]; then echo ${GPG_OWNERTRUST} | base64 --decode | ${GPG_EXECUTABLE} --import-ownertrust; fi
-  - mkdir -p ${HOME}/.travis/
-  - wget https://raw.githubusercontent.com/spals/parent-pom/master/.travis/deploy-lib.sh -O ${HOME}/.travis/deploy-lib.sh
-  - wget https://raw.githubusercontent.com/spals/parent-pom/master/.travis/settings.xml -O ${HOME}/.travis/settings.xml
+  - mkdir -p ${TRAVIS_BUILD_DIR}/.travis/
+  - wget https://raw.githubusercontent.com/spals/parent-pom/master/.travis/deploy-lib.sh -O ${TRAVIS_BUILD_DIR}/.travis/deploy-lib.sh
+  - wget https://raw.githubusercontent.com/spals/parent-pom/master/.travis/settings.xml -O ${TRAVIS_BUILD_DIR}/.travis/settings.xml
 
 install:
-  - mvn --settings ${HOME}/.travis/settings.xml --show-version dependency:resolve
-  - mvn --settings ${HOME}/.travis/settings.xml --show-version dependency:resolve-plugins
+  - mvn --settings .travis/settings.xml --show-version dependency:resolve
+  - mvn --settings .travis/settings.xml --show-version dependency:resolve-plugins
 
 script:
-  - mvn --batch-mode --settings ${HOME}/.travis/settings.xml --show-version test
+  - mvn --batch-mode --settings .travis/settings.xml --show-version test
 
 before_deploy:
-  - mvn --settings ${HOME}/.travis/settings.xml --show-version dependency:resolve -Ddeploy
-  - mvn --settings ${HOME}/.travis/settings.xml --show-version dependency:resolve-plugins -Ddeploy
+  - mvn --settings .travis/settings.xml --show-version dependency:resolve -Ddeploy
+  - mvn --settings .travis/settings.xml --show-version dependency:resolve-plugins -Ddeploy
 
 deploy:
   - provider: script
-    script: ${HOME}/.travis/deploy-lib.sh ${HOME}/.travis/settings.xml
+    script: .travis/deploy-lib.sh .travis/settings.xml
     skip_cleanup: true
     on:
       repo: spals/midas
       branch: master
       jdk: oraclejdk8
   - provider: script
-    script: ${HOME}/.travis/deploy-lib.sh ${HOME}/.travis/settings.xml
+    script: .travis/deploy-lib.sh .travis/settings.xml
     skip_cleanup: true
     on:
       repo: spals/midas
