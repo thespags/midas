@@ -13,6 +13,9 @@ cache:
 before_install:
   - if [ ! -z "${GPG_SECRET_KEYS}" ]; then echo ${GPG_SECRET_KEYS} | base64 --decode | ${GPG_EXECUTABLE} --import; fi
   - if [ ! -z "${GPG_OWNERTRUST}" ]; then echo ${GPG_OWNERTRUST} | base64 --decode | ${GPG_EXECUTABLE} --import-ownertrust; fi
+  - mkdir -p ${HOME}/.travis/
+  - wget https://raw.githubusercontent.com/spals/parent-pom/master/.travis/deploy-lib.sh -O ${HOME}/.travis/deploy-lib.sh
+  - wget https://raw.githubusercontent.com/spals/parent-pom/master/.travis/settings.xml -O ${HOME}/.travis/settings.xml
 
 install:
   - mvn --settings .travis/settings.xml --show-version dependency:resolve
@@ -23,14 +26,14 @@ script:
 
 deploy:
   - provider: script
-    script: .travis/deploy.sh
+    script: .travis/deploy-lib.sh
     skip_cleanup: true
     on:
       repo: spals/midas
       branch: master
       jdk: oraclejdk8
   - provider: script
-    script: .travis/deploy.sh
+    script: .travis/deploy-lib.sh
     skip_cleanup: true
     on:
       repo: spals/midas
