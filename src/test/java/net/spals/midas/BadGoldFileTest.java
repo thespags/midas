@@ -30,17 +30,6 @@
 
 package net.spals.midas;
 
-import net.spals.midas.differ.Differ;
-import net.spals.midas.io.FileUtil;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static com.googlecode.catchexception.apis.CatchExceptionHamcrestMatchers.hasMessage;
@@ -49,6 +38,18 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import net.spals.midas.differ.Differ;
+import net.spals.midas.io.FileUtil;
 
 /**
  * Tests for negative outcomes of {@link GoldFile}

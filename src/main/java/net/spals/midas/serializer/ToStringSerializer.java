@@ -30,12 +30,10 @@
 
 package net.spals.midas.serializer;
 
-import com.google.common.annotations.VisibleForTesting;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Objects;
 import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A {@link Serializer} which attempts to create a {@link String}
@@ -62,8 +60,7 @@ class ToStringSerializer implements Serializer {
             .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
     }
 
-    @VisibleForTesting
-    byte[] toStringSerialize(final Object input) {
+    private byte[] toStringSerialize(final Object input) {
         checkNotNull(input);
         final String inputString = input.toString();
 
@@ -75,8 +72,8 @@ class ToStringSerializer implements Serializer {
             final Optional<Serializer> registeredSerializer = registry.get(input.getClass());
             // See if we have a pre-registered serializer available for this type
             return registeredSerializer.map(serializer -> serializer.serialize(input))
-                    // Fallback to the reflection serializer
-                    .orElseGet(() -> new ReflectionSerializer(registry).serialize(input));
+                // Fallback to the reflection serializer
+                .orElseGet(() -> new ReflectionSerializer(registry).serialize(input));
         }
 
         // Otherwise, just return whatever the implemented toString()
@@ -85,8 +82,7 @@ class ToStringSerializer implements Serializer {
     }
 
     // Construct the String of the given input in pure Object form
-    @VisibleForTesting
-    String toObjectString(final Object input) {
+    private String toObjectString(final Object input) {
         return input.getClass().getName() + "@" + Integer.toHexString(input.hashCode());
     }
 }

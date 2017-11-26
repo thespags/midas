@@ -32,7 +32,6 @@ package net.spals.midas.serializer;
 
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * For a given {@code Map<K, V>}, this will use the {@link Serializer} provided for K, V to serialize.
@@ -56,23 +55,25 @@ class MapSerializer implements Serializer {
     }
 
     /**
-     * @param map the map to be serialized
+     * @param input the map to be serialized
      * @return the bytes of the serialized map
      */
     @SuppressWarnings("unchecked")
     @Override
-    public byte[] serialize(final Object map) {
+    public byte[] serialize(final Object input) {
+        final Map<?, ?> map = (Map<?, ?>) input;
         return StringEncoding.get().encode(
-            StreamSupport.stream(((Map<?, ?>) map).entrySet().spliterator(), false)
-                .map(
-                    entry ->
-                        StringEncoding.get().decode(registry.getUnsafe(entry.getKey().getClass())
-                                .orElseThrow(() -> new RuntimeException("No serializer found for type " + entry.getKey().getClass())).serialize(entry.getKey()))
-                            + " -> "
-                            + StringEncoding.get().decode(registry.getUnsafe(entry.getValue().getClass())
-                                .orElseThrow(() -> new RuntimeException("No serializer found for type " + entry.getValue().getClass())).serialize(entry.getValue()))
-                )
+            map.entrySet().stream()
+                .map(entry -> decode(entry.getKey()) + " -> " + decode(entry.getValue()))
                 .collect(Collectors.joining(", ", "(", ")"))
         );
+    }
+
+    private <T> String decode(final T x) {
+        final byte[] bytes = registry.getUnsafe(x.getClass())
+            .orElseThrow(() -> new RuntimeException("No serializer found for type " + x.getClass()))
+            .serialize(x);
+
+        return StringEncoding.get().decode(bytes);
     }
 }

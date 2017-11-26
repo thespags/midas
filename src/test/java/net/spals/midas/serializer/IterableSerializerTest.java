@@ -30,16 +30,16 @@
 
 package net.spals.midas.serializer;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import static net.spals.midas.serializer.ByteMatcher.bytes;
+
+import java.util.*;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+
 import org.testng.annotations.Test;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static net.spals.midas.serializer.ByteMatcher.bytes;
 
 /**
  * @author spags
@@ -74,7 +74,7 @@ public class IterableSerializerTest {
 
         private final List<T> list;
 
-        public Foo(final List<T> list) {
+        private Foo(final List<T> list) {
             this.list = list;
         }
 

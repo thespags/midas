@@ -30,20 +30,17 @@
 
 package net.spals.midas;
 
-import com.google.common.annotations.VisibleForTesting;
-import net.spals.midas.differ.Differ;
-import net.spals.midas.differ.Differs;
-import net.spals.midas.io.FileUtil;
-import net.spals.midas.io.GoldPath;
-import net.spals.midas.io.GoldPaths;
-import net.spals.midas.serializer.Serializer;
-import net.spals.midas.serializer.SerializerRegistry;
-import net.spals.midas.serializer.Serializers;
-
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
+
+import com.google.common.annotations.VisibleForTesting;
+
+import net.spals.midas.differ.Differ;
+import net.spals.midas.differ.Differs;
+import net.spals.midas.io.*;
+import net.spals.midas.serializer.*;
 
 /**
  * Creates an algorithm to diff an object against a source gold file reported the results.

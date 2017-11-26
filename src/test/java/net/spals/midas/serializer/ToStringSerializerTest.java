@@ -30,11 +30,12 @@
 
 package net.spals.midas.serializer;
 
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import static net.spals.midas.serializer.ByteMatcher.bytes;
-import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit tests for {@link ToStringSerializer}.
@@ -45,21 +46,22 @@ public class ToStringSerializerTest {
 
     @DataProvider
     Object[][] serializeProvider() {
-        return new Object[][]{
+        //noinspection UnnecessaryBoxing
+        return new Object[][] {
             // Case: Primitive
-            {1, "1"},
+            { 1, "1" },
             // Case: Primitive array
-            {new int[]{1}, "[1]"},
+            { new int[] { 1 }, "[1]" },
             // Case: Primitive wrapper
-            {Integer.valueOf(1), "1"},
+            { Integer.valueOf(1), "1" },
             // Case: Primitive wrapper array
-            {new Integer[]{Integer.valueOf(1)}, "[1]"},
+            { new Integer[] { 1 }, "[1]" },
             // Case: Implemented toString()
-            {"foo", "foo"},
+            { "foo", "foo" },
             // Case: String array
-            {new String[]{"foo"}, "[foo]"},
+            { new String[] { "foo" }, "[foo]" },
             // Case: Null value
-            {null, "<null>"},
+            { null, "<null>" }
         };
     }
 

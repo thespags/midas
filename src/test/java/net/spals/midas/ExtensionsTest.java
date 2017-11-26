@@ -30,14 +30,15 @@
 
 package net.spals.midas;
 
-import net.spals.midas.util.Tests;
-import org.testng.annotations.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.testng.annotations.Test;
+
+import net.spals.midas.util.Tests;
 
 /**
  * @author spags

@@ -30,18 +30,15 @@
 
 package net.spals.midas.serializer;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import static net.spals.midas.serializer.ByteMatcher.bytes;
-import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.*;
+
+import com.google.common.collect.*;
+
+import org.testng.annotations.Test;
 
 /**
  * @author spags
@@ -77,12 +74,14 @@ public class ReflectionSerializerTest {
 
     @SuppressWarnings("unused")
     private static class Default {
+
         private final Foo foo = new Foo();
         private final Foo nullFoo = null;
     }
 
-    @SuppressWarnings({"unused", "MismatchedReadAndWriteOfArray"})
+    @SuppressWarnings({ "unused", "MismatchedReadAndWriteOfArray" })
     private static class Foo {
+
         private final int littleInt = 0;
         private final Integer bigInt = 1;
         private final char littleChar = 2;
@@ -99,7 +98,7 @@ public class ReflectionSerializerTest {
         private final Boolean bigBoolean = false;
         private final String string = "foo";
 
-        private final int[] intArray = new int[]{1, 3, 5};
+        private final int[] intArray = new int[] { 1, 3, 5 };
         private final List<String> stringSet = ImmutableList.of("a", "b", "c");
         // make sure the order of the set is consistent.
         private final Set<Integer> intSet = Sets.newLinkedHashSet(Arrays.asList(2, 4, 6));

@@ -30,11 +30,12 @@
 
 package net.spals.midas.serializer;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
+
 import org.hamcrest.MatcherAssert;
 import org.testng.annotations.Test;
-
-import java.util.Map;
 
 /**
  * @author spags
