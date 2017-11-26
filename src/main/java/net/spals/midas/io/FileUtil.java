@@ -30,14 +30,14 @@
 
 package net.spals.midas.io;
 
-import net.spals.midas.GoldFileException;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.logging.Logger;
+
+import net.spals.midas.GoldFileException;
 
 /**
  * Wrapper around {@link Files} to make the calls non static so they can be easily mocked.

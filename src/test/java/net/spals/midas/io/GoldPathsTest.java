@@ -30,15 +30,16 @@
 
 package net.spals.midas.io;
 
-import net.spals.midas.util.Tests;
-import org.testng.annotations.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.testng.annotations.Test;
+
+import net.spals.midas.util.Tests;
 
 public class GoldPathsTest {
 

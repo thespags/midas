@@ -42,7 +42,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  */
 public final class Serializers {
 
-    private Serializers() {  }
+    private Serializers() {
+    }
 
     public static Serializer newJackson(final String fileExtension, final ObjectMapper objectMapper) {
         return new JacksonSerializer(fileExtension, objectMapper);

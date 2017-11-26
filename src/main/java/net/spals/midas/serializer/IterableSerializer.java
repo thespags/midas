@@ -32,9 +32,7 @@ package net.spals.midas.serializer;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.*;
 
 /**
  * For a given {@code Iterable<T>}, this will use the {@link Serializer} provided for T to serialize.
@@ -77,7 +75,8 @@ class IterableSerializer implements Serializer {
         return StringEncoding.get().encode(
             StreamSupport.stream(((Iterable<?>) iterable).spliterator(), false)
                 .map(v -> StringEncoding.get().decode(registry.getUnsafe(v.getClass())
-                    .orElseThrow(() -> new RuntimeException("No serializer found for type" + v.getClass())).serialize(v)))
+                    .orElseThrow(() -> new RuntimeException("No serializer found for type" + v.getClass()))
+                    .serialize(v)))
                 .collect(joiner)
         );
     }

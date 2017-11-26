@@ -36,6 +36,7 @@ package net.spals.midas;
  * @author spags
  */
 public interface GoldOptions {
+
     boolean checkout();
 
     boolean writable();

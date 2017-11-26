@@ -30,18 +30,18 @@
 
 package net.spals.midas;
 
-
-import net.spals.midas.io.FileUtil;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.mockito.Mockito.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import net.spals.midas.io.FileUtil;
 
 /**
  * @author spags

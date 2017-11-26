@@ -30,14 +30,11 @@
 
 package net.spals.midas.serializer;
 
-import com.google.common.base.Preconditions;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+
+import com.google.common.base.Preconditions;
 
 /**
  * A mapping of types to their serializer.

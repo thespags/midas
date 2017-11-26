@@ -30,8 +30,9 @@
 
 package net.spals.midas.serializer;
 
-import net.spals.midas.util.Tests;
 import org.testng.annotations.Test;
+
+import net.spals.midas.util.Tests;
 
 /**
  * @author spags

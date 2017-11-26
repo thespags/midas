@@ -96,7 +96,7 @@ public final class GoldPaths {
 
         private final Path parent;
 
-        public ParentPath(final Path parent) {
+        private ParentPath(final Path parent) {
             this.parent = parent;
         }
 
@@ -107,6 +107,7 @@ public final class GoldPaths {
     }
 
     private static class SimplePath implements GoldPath {
+
         @Override
         public Path get(final Path path) {
             return path;

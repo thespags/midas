@@ -30,18 +30,19 @@
 
 package net.spals.midas;
 
-import net.spals.midas.io.GoldPaths;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import net.spals.midas.io.GoldPaths;
 
 /**
  * Tests for positive outcomes and the overall flow of {@link GoldFile}

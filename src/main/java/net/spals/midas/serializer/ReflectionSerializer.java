@@ -30,12 +30,12 @@
 
 package net.spals.midas.serializer;
 
-import net.spals.midas.GoldFileException;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import net.spals.midas.GoldFileException;
 
 /**
  * A serializer that uses reflection to print all non null field values for an entity. The serializer is customizable
@@ -75,7 +75,7 @@ final class ReflectionSerializer implements Serializer {
         return StringEncoding.get().encode(builder.toString());
     }
 
-    public byte[] serializeFieldValue(final Object fieldValue) {
+    private byte[] serializeFieldValue(final Object fieldValue) {
         final Serializer fieldValueSerializer = Optional.ofNullable(fieldValue)
             .flatMap(fValue -> registry.getUnsafe(fValue.getClass()))
             .orElseGet(() -> new ToStringSerializer(registry));

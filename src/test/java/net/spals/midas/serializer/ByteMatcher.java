@@ -30,10 +30,10 @@
 
 package net.spals.midas.serializer;
 
+import java.util.Arrays;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-
-import java.util.Arrays;
 
 /**
  * Matcher for byte arrays.

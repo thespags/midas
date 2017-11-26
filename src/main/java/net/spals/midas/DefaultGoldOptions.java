@@ -58,20 +58,20 @@ public final class DefaultGoldOptions implements GoldOptions {
     }
 
     /**
+     * @return should we actually write a file to the system?
+     */
+    @Override
+    public boolean writable() {
+        return writable;
+    }
+
+    /**
      * @param checkout if we can overwrite the current file or do we write a back up?
      * @return the options
      */
     public GoldOptions setCheckout(final boolean checkout) {
         this.checkout = checkout;
         return this;
-    }
-
-    /**
-     * @return should we actually write a file to the system?
-     */
-    @Override
-    public boolean writable() {
-        return writable;
     }
 
     /**

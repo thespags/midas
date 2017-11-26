@@ -1,12 +1,11 @@
 package net.spals.midas.serializer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.VisibleForTesting;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A {@link Serializer} implementation
@@ -42,12 +41,11 @@ class JacksonSerializer implements Serializer {
     @Override
     public byte[] serialize(final Object input) {
         return Optional.ofNullable(input)
-                .map(this::jacksonSerialize)
-                .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
+            .map(this::jacksonSerialize)
+            .orElseGet(() -> StringEncoding.get().encode(StringEncoding.NULL));
     }
 
-    @VisibleForTesting
-    byte[] jacksonSerialize(final Object input) {
+    private byte[] jacksonSerialize(final Object input) {
         checkNotNull(input);
         try {
             return objectMapper.writeValueAsBytes(input);

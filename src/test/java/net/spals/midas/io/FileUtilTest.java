@@ -30,17 +30,18 @@
 
 package net.spals.midas.io;
 
-import net.spals.midas.GoldFileException;
-import org.testng.annotations.Test;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.testng.annotations.Test;
+
+import net.spals.midas.GoldFileException;
 
 public class FileUtilTest {
 
