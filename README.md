@@ -2,7 +2,9 @@
 
 # midas
 
-A gold file testing/approval testing/golden master framework for testing your code.
+A gold file testing/approval testing/golden master framework for testing your code. Gold file testing is a simple approach to testing with expected output in a version controlled file. Gold file testing is a light weight approach to contract testing. 
+
+Midas is a framework that does the dirty work of file management for your tests while you can focus on writing your code. Midas is powerful and allows you to write custom serialization against objects, or use passed in Strings.
 
 ### Installation
 
